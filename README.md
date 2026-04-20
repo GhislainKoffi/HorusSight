@@ -20,7 +20,9 @@ HorusSight bridges this gap by combining detection with intelligent analysis.
 HorusSight is built on three main technical layers:
 
 **Frontend Layer** : User interface & visualization
+
 **Backend Layer** : API, orchestration, AI risk engine
+
 **Security Engine** : OWASP-based vulnerability detection
 
 
@@ -81,9 +83,13 @@ HorusSight is built on three main technical layers:
 ##  Tech Stack
 
  **Frontend:** React, TailwindCSS
+ 
  **Backend:** FastAPI (Python)
+ 
  **Security Engine:** Python (OWASP-based scanners)
+ 
  **AI Layer:** Custom risk analysis engine
+  
  **Infrastructure:** Docker, GitHub Actions
 
 
