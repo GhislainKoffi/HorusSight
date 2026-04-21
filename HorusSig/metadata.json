@@ -1,0 +1,14 @@
+{
+  "name": "HorusSight",
+  "description": "Accessible AI cybersecurity. Detect website vulnerabilities instantly without technical knowledge. Guest scanning available; create an account for advanced intelligence and monitoring.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "Security Scanning",
+    "AI Risk Analysis",
+    "Vulnerability Visualization"
+  ]
+}

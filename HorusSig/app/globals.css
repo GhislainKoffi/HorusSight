@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-scan-bg: var(--scan-bg);
+  --color-scan-surface: var(--scan-surface);
+  --color-scan-header: var(--scan-header);
+  --color-scan-border: var(--scan-border);
+  --color-scan-text: var(--scan-text);
+  --color-scan-text-muted: var(--scan-text-muted);
+  --color-scan-accent: var(--scan-accent);
+  --color-scan-danger: var(--scan-danger);
+  --color-scan-warning: var(--scan-warning);
+  --color-scan-success: var(--scan-success);
+}
+
+:root {
+  /* Dark Theme (Default) - Optimized for high visibility */
+  --scan-bg: #05060A;
+  --scan-surface: #0D0F16;
+  --scan-header: #080A0F;
+  --scan-border: #1E293B;
+  --scan-text: #F1F5F9; /* Shaded White */
+  --scan-text-muted: #94A3B8;
+  --scan-accent: #6366F1;
+  --scan-accent-muted: rgba(99, 102, 241, 0.1);
+  --scan-danger: #FB7185;
+  --scan-warning: #FBBF24;
+  --scan-success: #34D399;
+}
+
+:root.light {
+  /* Light Theme - Clean High Contrast */
+  --scan-bg: #FFFFFF;
+  --scan-surface: #F8FAFC;
+  --scan-header: #F1F5F9;
+  --scan-border: #E2E8F0;
+  --scan-text: #020617; /* Slate 950 - Almost Black */
+  --scan-text-muted: #64748B; /* Slate 500 */
+  --scan-accent: #4F46E5;
+  --scan-accent-muted: rgba(79, 70, 229, 0.05);
+}
+
+@layer base {
+  html {
+    font-size: 17px; /* Increased base font size */
+  }
+  body {
+    background-color: var(--scan-bg);
+    color: var(--scan-text);
+    @apply font-sans transition-colors duration-500 overflow-x-hidden;
+  }
+}
+
+/* Custom Component Tokens - Larger Scale */
+.scan-card {
+  background-color: var(--scan-surface);
+  border: 1px solid var(--scan-border);
+  @apply rounded-[3.5rem] shadow-[0_30px_80px_rgba(0,0,0,0.4)] overflow-hidden transition-all duration-500 relative;
+}
+
+.scan-card::after {
+  content: "";
+  @apply absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent pointer-events-none transition-opacity duration-500;
+}
+
+.scan-card:hover {
+  @apply border-indigo-500/30 -translate-y-2 shadow-[0_40px_100px_rgba(0,0,0,0.5)];
+}
+
+.nav-link {
+  @apply flex items-center px-6 py-4 rounded-2xl transition-all text-base font-semibold tracking-tight;
+}
+
+.nav-link-active {
+  background-color: var(--scan-accent-muted);
+  color: var(--scan-accent);
+  @apply shadow-sm;
+}
+
+.nav-link-inactive {
+  color: var(--scan-text-muted);
+  @apply hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100;
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Glassmorphism Classes */
+.glass {
+  background: rgba(var(--scan-surface-rgb), 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
