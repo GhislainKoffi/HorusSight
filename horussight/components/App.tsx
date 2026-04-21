@@ -42,6 +42,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import api from '@/lib/api';
+import { i18n } from '@/lib/translations';
 import {
   analyzeVulnerabilities,
   analyzeSecurityLogs,
@@ -132,9 +133,16 @@ const Badge = ({ variant, children }: any) => {
 
 // --- View Components ---
 
-const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView }: any) => {
+const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView, t }: any) => {
   const totalVuls = scans.reduce((acc: number, s: any) => acc + (s.vulnerabilities?.length || 0), 0);
   const criticalVuls = scans.reduce((acc: number, s: any) => acc + (s.vulnerabilities?.filter((v: any) => v.severity === 'Critical').length || 0), 0);
+
+  const statusCards = [
+    { label: 'Total Scans', value: scans.length, icon: Target, color: 'text-indigo-400', gradient: 'from-indigo-600/5' },
+    { label: 'Active Targets', value: new Set(scans.map((s: any) => s.target)).size, icon: Activity, color: 'text-emerald-400', gradient: 'from-emerald-600/5' },
+    { label: 'Vuln.', value: totalVuls, icon: AlertTriangle, color: 'text-orange-400', gradient: 'from-orange-600/5' },
+    { label: 'Critical', value: criticalVuls, icon: Shield, color: 'text-rose-500', gradient: 'from-rose-600/5' },
+  ];
 
   return (
     <div className="space-y-5 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -142,45 +150,38 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView }: a
         <div className="absolute -top-24 -left-24 w-64 h-64 bg-indigo-600/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-indigo-600/10 transition-colors" />
 
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between relative z-10">
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 mb-1">
-              <div className="flex -space-x-2">
-                <div className="w-4 h-4 md:w-6 md:h-6 rounded-full border-2 border-scan-bg bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]"></div>
-                <div className="w-4 h-4 md:w-6 md:h-6 rounded-full border-2 border-scan-bg bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.4)] animate-pulse"></div>
+          <div className="space-y-6">
+            <div className="flex items-center gap-4 mb-2">
+              <div className="flex -space-x-3">
+                <div className="w-5 h-5 md:w-8 md:h-8 rounded-full border-4 border-scan-bg bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)]"></div>
+                <div className="w-5 h-5 md:w-8 md:h-8 rounded-full border-4 border-scan-bg bg-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.5)] animate-pulse"></div>
               </div>
-              <span className="text-[9px] md:text-[10px] font-black text-scan-text-muted uppercase tracking-[0.3em] italic">Digital Fortress: Active</span>
+              <span className="text-[10px] md:text-xs font-black text-scan-text-muted uppercase tracking-[0.5em] italic">{t('dashboard', 'system_status')}</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black text-scan-text tracking-tighter uppercase leading-[0.85] drop-shadow-lg">
-              Stratégie <span className="text-indigo-500">Globale</span>
+            <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black text-scan-text tracking-[-0.05em] uppercase leading-[0.8] drop-shadow-2xl">
+              {t('dashboard', 'welcome')}
             </h1>
-            <p className="text-sm md:text-xl text-scan-text-muted max-w-2xl font-medium border-l-2 border-indigo-600/30 pl-4 py-1">
-              Surveillance proactive de votre posture de sécurité réseau.
+            <p className="text-sm md:text-2xl text-scan-text-muted max-w-3xl font-medium border-l-4 border-indigo-600/30 pl-8 py-2 leading-relaxed">
+              {t('dashboard', 'monitoring_metrics')}
             </p>
           </div>
           <div className="flex gap-3">
             <Button variant="secondary" icon={Terminal} onClick={() => setView('logs')} className="!px-4 !py-3 uppercase tracking-widest !text-xs">Logs</Button>
-            <Button icon={Search} onClick={onNewScan} guided className="!px-6 !py-3 md:!px-10 md:!py-4">Initier Scan</Button>
+            <Button icon={Search} onClick={onNewScan} guided className="!px-6 !py-3 md:!px-10 md:!py-4">{t('dashboard', 'start_scan_title')}</Button>
           </div>
         </div>
       </header>
 
-      {isGuest && (
         <div className="p-6 bg-indigo-600/10 border border-indigo-600/20 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg shadow-indigo-950/20">
           <div className="space-y-2 text-center md:text-left">
-            <h3 className="font-bold text-indigo-400 uppercase tracking-widest text-sm">Guest Mode Active</h3>
-            <p className="text-xs text-scan-text-muted">Unlock advanced risk intelligence, automated logs, and priority remediation by creating an account.</p>
+            <h3 className="font-bold text-indigo-400 uppercase tracking-widest text-sm">{t('dashboard', 'guest_mode')}</h3>
+            <p className="text-xs text-scan-text-muted">{t('dashboard', 'guest_desc')}</p>
           </div>
-          <Button variant="primary" className="whitespace-nowrap px-8" onClick={() => window.location.reload()}>Create Full Profile</Button>
+          <Button variant="primary" className="whitespace-nowrap px-8" onClick={() => window.location.reload()}>{t('dashboard', 'create_profile')}</Button>
         </div>
-      )}
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-8">
-        {[
-          { label: 'Total Scans', value: scans.length, icon: Target, color: 'text-indigo-400', gradient: 'from-indigo-600/5' },
-          { label: 'Active Targets', value: new Set(scans.map((s: any) => s.target)).size, icon: Activity, color: 'text-emerald-400', gradient: 'from-emerald-600/5' },
-          { label: 'Vuln.', value: totalVuls, icon: AlertTriangle, color: 'text-orange-400', gradient: 'from-orange-600/5' },
-          { label: 'Critical', value: criticalVuls, icon: Shield, color: 'text-rose-500', gradient: 'from-rose-600/5' },
-        ].map((stat, i) => (
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-12">
+        {statusCards.map((stat: any, i: number) => (
           <Card key={i} className="hover:border-indigo-500/30 group relative">
             <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${stat.gradient} to-transparent rounded-bl-[100px] -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
             <div className="flex items-center justify-between relative z-10">
@@ -193,7 +194,7 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView }: a
               </div>
             </div>
             <div className="mt-4 md:mt-8 pt-3 md:pt-6 border-t border-scan-border/40 flex items-center justify-between">
-              <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-scan-text-muted">Temps réel</span>
+              <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-scan-text-muted">{t('dashboard', 'real_time')}</span>
               <div className="flex gap-1">
                 {[1, 2, 3].map(j => <div key={j} className={`w-1 h-2 md:h-3 rounded-full bg-current ${stat.color} opacity-40 animate-pulse`} style={{ animationDelay: `${j * 0.2}s` }} />)}
               </div>
@@ -204,35 +205,35 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView }: a
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <Card title="Security Feed" icon={Activity}>
+          <Card title={t('dashboard', 'feed_title')} icon={Activity}>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-scan-border text-scan-text-muted text-sm uppercase tracking-widest font-black py-6 px-8">
-                    <th className="py-4 px-6">Source Target</th>
-                    <th className="py-4 px-6">Findings</th>
-                    <th className="py-4 px-6">Timestamp</th>
-                    <th className="py-4 px-6 text-right">Details</th>
+                    <th className="py-4 px-6">{t('dashboard', 'source_target')}</th>
+                    <th className="py-4 px-6">{t('dashboard', 'findings')}</th>
+                    <th className="py-4 px-6">{t('dashboard', 'timestamp')}</th>
+                    <th className="py-4 px-6 text-right">{t('dashboard', 'details')}</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm">
                   {!Array.isArray(scans) || scans.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="py-12 text-center text-scan-text-muted italic">No security data available.</td>
+                      <td colSpan={4} className="py-12 text-center text-scan-text-muted italic">{t('dashboard', 'no_data')}</td>
                     </tr>
                   ) : (
                     scans.map((scan: any) => (
                       <tr key={scan.id} className="border-b border-scan-border/50 hover:bg-slate-800/20 transition-colors group">
-                        <td className="py-5 px-6">
-                          <span className="font-mono text-xs text-scan-text-muted">{scan.target}</span>
+                        <td className="py-8 px-8">
+                          <span className="font-mono text-sm text-scan-text-muted">{scan.target}</span>
                         </td>
-                        <td className="py-5 px-6">
-                          <Badge variant={scan.vulnerabilities?.length > 0 ? 'High' : 'Completed'}>
-                            {scan.vulnerabilities?.length || 0} Findings
+                        <td className="py-8 px-8">
+                          <Badge variant={scan.vulnerabilities?.length > 0 ? 'High' : 'Completed'} className="px-6 py-2">
+                            {scan.vulnerabilities?.length || 0} {t('dashboard', 'findings')}
                           </Badge>
                         </td>
-                        <td className="py-5 px-6 text-xs text-scan-text-muted font-mono italic">{new Date(scan.timestamp).toLocaleTimeString()}</td>
-                        <td className="py-5 px-6 text-right">
+                        <td className="py-8 px-8 text-sm text-scan-text-muted font-mono italic">{new Date(scan.timestamp).toLocaleTimeString()}</td>
+                        <td className="py-8 px-8 text-right">
                           <button
                             onClick={() => onSelectScan(scan.id)}
                             className="p-2 hover:bg-indigo-600 rounded-full text-scan-text-muted hover:text-scan-text transition-all"
@@ -250,7 +251,7 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView }: a
         </div>
 
         <div>
-          <Card title="System Logs" icon={Terminal} subtitle={isGuest ? "Locked in Guest Mode" : "Real-time Access Monitoring"}>
+          <Card title={t('sidebar', 'terminal')} icon={Terminal} subtitle={isGuest ? t('dashboard', 'logs_locked') : t('dashboard', 'real_time_access')}>
             <div className={`space-y-4 ${isGuest ? 'filter blur-[4px] pointer-events-none grayscale opacity-30 select-none' : ''}`}>
               {Array.isArray(logs) && logs.map((log: any) => (
                 <div key={log.id} className="p-4 bg-slate-900 border border-scan-border rounded-2xl space-y-2 shadow-inner">
@@ -264,11 +265,11 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView }: a
                   </p>
                 </div>
               ))}
-              {(!Array.isArray(logs) || logs.length === 0) && !isGuest && <p className="text-xs text-scan-text-muted text-center py-6 italic">No intrusive attempts detected.</p>}
+              {(!Array.isArray(logs) || logs.length === 0) && !isGuest && <p className="text-xs text-scan-text-muted text-center py-6 italic">{t('dashboard', 'no_intrusive')}</p>}
             </div>
             {isGuest && (
               <div className="absolute inset-x-0 bottom-12 flex justify-center">
-                <Button variant="secondary" onClick={() => window.location.reload()} className="text-[10px] uppercase tracking-widest">Unlock Monitoring</Button>
+                <Button variant="secondary" onClick={() => window.location.reload()} className="text-[10px] uppercase tracking-widest">{t('dashboard', 'unlock_monitoring')}</Button>
               </div>
             )}
           </Card>
@@ -278,7 +279,7 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView }: a
   );
 };
 
-const NewScan = ({ onStartScan, loading }: any) => {
+const NewScan = ({ onStartScan, loading, t }: any) => {
   const [url, setUrl] = useState('');
 
   const handleSubmit = (e: any) => {
@@ -293,18 +294,18 @@ const NewScan = ({ onStartScan, loading }: any) => {
         <div className="mx-auto w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center text-blue-400 shadow-[0_0_30px_rgba(37,99,235,0.2)] mb-6">
           <Target className="w-8 h-8" />
         </div>
-        <h1 className="text-3xl font-black tracking-tighter uppercase text-scan-text">Lancer une Simulation d'Attaque</h1>
-        <p className="text-scan-text-muted font-medium">Saisissez l'URL cible pour effectuer une évaluation automatisée des vulnérabilités (OWASP).</p>
+        <h1 className="text-3xl font-black tracking-tighter uppercase text-scan-text">{t('dashboard', 'start_scan_title')}</h1>
+        <p className="text-scan-text-muted font-medium">{t('dashboard', 'start_scan_title')}</p>
       </div>
 
       <Card className="p-8 bg-slate-900 shadow-inner">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-[10px] uppercase tracking-[0.4em] font-black text-scan-text-muted pl-4 italic">URL de la Cible</label>
+            <label className="text-[10px] uppercase tracking-[0.4em] font-black text-scan-text-muted pl-4 italic">{t('dashboard', 'target')}</label>
             <div className="relative">
               <input
                 type="url"
-                placeholder="https://votre-site-dns.com"
+                placeholder={t('dashboard', 'scan_placeholder')}
                 className="w-full bg-scan-bg border border-scan-border rounded-[2rem] py-4 px-8 text-scan-text focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-inner font-mono text-lg"
                 value={url}
                 required
@@ -316,7 +317,7 @@ const NewScan = ({ onStartScan, loading }: any) => {
 
           <div className="bg-indigo-500/5 border border-indigo-500/20 rounded-2xl p-6 flex gap-4 text-sm text-scan-text-muted leading-relaxed italic">
             <Shield className="w-6 h-6 shrink-0 text-indigo-500" />
-            <p>Ewaba Engine: "Initialisation des protocoles d'attaque et de crawl récursif. Toutes les actions sont journalisées pour conformité."</p>
+            <p>{t('report', 'engine_msg')}</p>
           </div>
 
           <Button
@@ -346,27 +347,27 @@ const NewScan = ({ onStartScan, loading }: any) => {
   );
 };
 
-const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: any) => {
+const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme, lang, toggleLang, t }: any) => {
   const [url, setUrl] = useState('');
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
     {
-      badge: "Cyber-Défense par IA",
-      title: "DÉTECTEZ <span class='text-indigo-500'>L'INVISIBLE</span> INSTANTANÉMENT.",
-      desc: "L'outil de sécurité conçu pour les humains. HorusSight utilise le moteur Ewaba pour scanner votre site et vous dire exactement comment corriger les failles.",
+      badge: t('landing', 'slide1_badge'),
+      title: t('landing', 'slide1_title'),
+      desc: t('landing', 'slide1_desc'),
       image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=2070"
     },
     {
-      badge: "Roadmap Stratégique",
-      title: "PRIORISEZ VOS <span class='text-indigo-500'>ACTIONS</span> DE SÉCURITÉ.",
-      desc: "Recevez un plan de remédiation détaillé et priorisé. Ne perdez plus de temps sur des faux positifs, concentrez-vous sur l'essentiel.",
+      badge: t('landing', 'slide2_badge'),
+      title: t('landing', 'slide2_title'),
+      desc: t('landing', 'slide2_desc'),
       image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc51?auto=format&fit=crop&q=80&w=2000"
     },
     {
-      badge: "Intelligence en Temps Réel",
-      title: "SURVEILLANCE <span class='text-indigo-500'>ACTIVE</span> 24/7.",
-      desc: "Monitorez vos logs en temps réel et recevez des alertes immédiates en cas de tentative d'intrusion suspecte.",
+      badge: t('landing', 'slide3_badge'),
+      title: t('landing', 'slide3_title'),
+      desc: t('landing', 'slide3_desc'),
       image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=2070"
     }
   ];
@@ -395,15 +396,26 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
             <Shield className="w-7 h-7 md:w-10 md:h-10 text-indigo-600" />
             <span className="font-black text-lg md:text-2xl lg:text-3xl tracking-[0.15em] uppercase text-scan-text">HorusSight</span>
           </div>
-          <div className="flex items-center gap-3 md:gap-6">
-            <button onClick={onLogin} className="hidden sm:block text-xs font-black uppercase tracking-widest text-scan-text-muted hover:text-scan-text transition-colors">Connexion</button>
+          <div className="flex items-center gap-2 md:gap-4 ml-auto">
+            <button
+              onClick={toggleLang}
+              className="p-2 md:p-3 rounded-xl border border-scan-border hover:bg-scan-border text-scan-text transition-colors font-bold text-xs uppercase"
+            >
+              {lang === 'en' ? 'FR' : 'EN'}
+            </button>
             <button
               onClick={toggleTheme}
-              className="p-2 md:p-3 text-scan-text-muted hover:text-scan-accent transition-colors bg-scan-surface border border-scan-border rounded-xl md:rounded-2xl"
+              className="p-2 md:p-3 rounded-xl border border-scan-border hover:bg-scan-border transition-colors hidden sm:block"
             >
-              {theme === 'dark' ? <Sun className="w-5 h-5 md:w-6 md:h-6 text-amber-400" /> : <Moon className="w-5 h-5 md:w-6 md:h-6 text-indigo-400" />}
+              {theme === 'dark' ? <Sun className="w-4 h-4 md:w-5 md:h-5 text-amber-400" /> : <Moon className="w-4 h-4 md:w-5 md:h-5 text-indigo-400" />}
             </button>
-            <Button onClick={onLogin} className="!px-4 !py-2 md:!px-8 md:!py-3 !text-xs md:!text-sm">Profil</Button>
+            <Button variant="secondary" onClick={onLogin} className="!py-2 md:!py-3 !px-4 md:!px-6 !text-xs md:!text-sm uppercase tracking-widest hidden sm:flex">
+              {t('common', 'login')}
+            </Button>
+            {/* Mobile login button (Icon only) */}
+            <Button variant="secondary" onClick={onLogin} className="!p-2 sm:hidden">
+              <User className="w-4 h-4" />
+            </Button>
           </div>
         </div>
       </nav>
@@ -443,31 +455,20 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
                 <div className="h-[1px] w-8 bg-indigo-500 hidden sm:block"></div>
               </div>
               <h1
-                className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-black text-scan-text tracking-tighter leading-[0.85] uppercase drop-shadow-2xl"
+                className="text-4xl sm:text-6xl md:text-8xl lg:text-[10rem] font-black text-scan-text tracking-[-0.07em] leading-[0.8] uppercase drop-shadow-2xl"
                 dangerouslySetInnerHTML={{ __html: slides[currentSlide].title }}
               />
-              <p className="text-base md:text-xl lg:text-2xl text-scan-text-muted leading-relaxed max-w-2xl font-medium mx-auto md:mx-0">
+              <p className="text-lg md:text-2xl lg:text-3xl text-scan-text-muted leading-relaxed max-w-3xl font-medium mx-auto md:mx-0 border-l-4 border-indigo-600/20 pl-8 py-2">
                 {slides[currentSlide].desc}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-2 items-center md:items-start">
                 <Button onClick={onLogin} className="w-full sm:w-auto !px-8 !py-4 md:!px-12 md:!py-5 !text-base md:!text-lg shadow-[0_0_30px_rgba(79,70,229,0.3)]">
-                  Profil Sécurisé
+                  {t('common', 'secure_profile')}
                 </Button>
                 <Button variant="secondary" onClick={() => scrollToId('quick-scan')} className="w-full sm:w-auto !px-8 !py-4 md:!px-10 md:!py-5 !text-base md:!text-lg border-indigo-500/20 group">
-                  Lancement Rapide <ChevronRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
+                  {t('common', 'quick_launch')} <ChevronRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
                 </Button>
-              </div>
-
-              <div className="flex items-center justify-center md:justify-start gap-4 pt-4">
-                <div className="flex -space-x-3">
-                  {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border-4 border-scan-border bg-slate-800 flex items-center justify-center overflow-hidden shadow-xl">
-                      <img src={`https://i.pravatar.cc/150?img=${i + 20}`} alt="user" className="w-full h-full object-cover" />
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs md:text-sm font-bold text-scan-text-muted uppercase tracking-[0.15em] italic">+2,500 experts font confiance</p>
               </div>
             </motion.div>
           </AnimatePresence>
@@ -491,7 +492,7 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
           transition={{ repeat: Infinity, duration: 2 }}
           className="absolute bottom-16 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-4 text-scan-text-muted hover:text-scan-text transition-colors group"
         >
-          <span className="text-[10px] font-black uppercase tracking-[0.5em] opacity-40 group-hover:opacity-100">Découvrir Horus</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.5em] opacity-40 group-hover:opacity-100">{t('common', 'discover')}</span>
           <div className="w-8 h-14 rounded-full border-2 border-scan-border flex items-start justify-center p-2 shadow-lg">
             <div className="w-1.5 h-3 bg-indigo-500 rounded-full animate-bounce" />
           </div>
@@ -510,9 +511,9 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
                 <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
                 <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">Module Ghost Infiltration</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black text-scan-text uppercase tracking-tighter leading-tight">Lancer une Infiltration <span className="text-indigo-500 underline decoration-indigo-500/20 underline-offset-8">Tactique</span></h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black text-scan-text uppercase tracking-tighter leading-tight">{t('dashboard', 'start_scan_title')}</h2>
               <p className="text-sm md:text-base lg:text-xl text-scan-text-muted leading-relaxed font-medium">
-                Saisissez l'URL cible pour initier une simulation d'attaque non-intrusive.
+                {t('landing', 'feature_speed_desc')}
               </p>
             </div>
 
@@ -549,9 +550,9 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
         <div className="max-w-[1700px] mx-auto px-4 md:px-8 lg:px-10">
           <div className="grid lg:grid-cols-3 gap-6 md:gap-10 lg:gap-12">
             {[
-              { title: 'IA EWABA V3.2', desc: 'Analyse neuronale profonde basée sur 15 ans d\'historique de cyber-attaques.', icon: BrainCircuit, color: 'indigo' },
-              { title: 'Zéro Faux Positifs', desc: 'Chaque vulnérabilité est validée par notre moteur avant d\'être reportée.', icon: Shield, color: 'blue' },
-              { title: 'Infiltration Discrète', desc: 'Des simulations d\'attaque non-intrusives qui n\'affectent jamais vos performances.', icon: Target, color: 'violet' }
+              { title: t('landing', 'feature_ai'), desc: t('landing', 'feature_ai_desc'), icon: BrainCircuit, color: 'indigo' },
+              { title: t('landing', 'feature_speed'), desc: t('landing', 'feature_speed_desc'), icon: Shield, color: 'blue' },
+              { title: t('landing', 'feature_pdf'), desc: t('landing', 'feature_pdf_desc'), icon: Target, color: 'violet' }
             ].map((f, i) => (
               <motion.div
                 key={i}
@@ -578,21 +579,20 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
         <div className="max-w-[1700px] mx-auto px-4 md:px-8 lg:px-10 relative z-10">
           <div className="text-center space-y-5 md:space-y-10 mb-12 md:mb-24 lg:mb-40">
             <div className="inline-block px-6 py-3 md:px-10 md:py-4 bg-scan-surface border border-scan-border rounded-full shadow-2xl">
-              <span className="text-[10px] font-black uppercase tracking-[0.8em] text-indigo-500">Architecture &amp; Logique</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.8em] text-indigo-500">{t('landing', 'arch_badge')}</span>
             </div>
-            <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-black text-scan-text uppercase tracking-tighter leading-none italic">
-              De la <span className="text-indigo-500 relative">Sonde<span className="absolute -bottom-2 left-0 w-full h-2 bg-indigo-500/10"></span></span> à la Protection
+            <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-black text-scan-text uppercase tracking-tighter leading-none italic" dangerouslySetInnerHTML={{ __html: t('landing', 'arch_title') }}>
             </h2>
             <p className="text-scan-text-muted max-w-3xl mx-auto text-base md:text-xl lg:text-2xl font-medium opacity-70">
-              Une transparence numérique totale, propulsée par un cycle de détection intensif.
+              {t('landing', 'arch_subtitle')}
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 md:gap-10">
             {[
-              { step: '01', title: 'Cartographie Ghost', desc: 'Identifie chaque point d\'entrée actif sans jamais perturber le flux utilisateur.', icon: Search },
-              { step: '02', title: 'Analyse Intensive', desc: 'Ewaba confronte les patterns à notre base mondiale de menaces en temps réel.', icon: Cpu },
-              { step: '03', title: 'Roadmap Défense', desc: 'Un plan de remédiation complet avec correctifs prêts à être déployés.', icon: LayoutDashboard },
+              { step: '01', title: t('landing', 'step1_title'), desc: t('landing', 'step1_desc'), icon: Search },
+              { step: '02', title: t('landing', 'step2_title'), desc: t('landing', 'step2_desc'), icon: Cpu },
+              { step: '03', title: t('landing', 'step3_title'), desc: t('landing', 'step3_desc'), icon: LayoutDashboard },
             ].map((s, i) => (
               <div key={i} className="flex flex-col h-full bg-scan-surface/20 border border-scan-border rounded-2xl md:rounded-[3rem] p-8 md:p-12 lg:p-16 relative overflow-hidden group hover:bg-scan-surface/40 transition-all duration-700 text-center md:text-left">
                 <div className="text-4xl md:text-6xl font-black text-scan-text opacity-10 mb-6 md:mb-12 font-mono group-hover:text-indigo-500 transition-colors">{s.step}</div>
@@ -617,19 +617,19 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
                 <span className="font-black text-2xl md:text-3xl lg:text-4xl tracking-[0.2em] uppercase text-scan-text">HorusSight</span>
               </div>
               <p className="text-sm md:text-base lg:text-xl text-scan-text-muted leading-relaxed max-w-sm mx-auto sm:mx-0 font-medium">
-                Démocratiser la cybersécurité grâce à une intelligence artificielle évolutive.
+                {t('footer', 'demo_text')}
               </p>
-              <div className="flex gap-4 md:gap-6 justify-center sm:justify-start">
+              <div className="flex gap-6 md:gap-10 justify-center sm:justify-start">
                 {[Github, Twitter, Mail, Slack].map((Icon, i) => (
-                  <button key={i} className="p-3 md:p-5 bg-scan-surface border border-scan-border rounded-2xl text-scan-text-muted hover:text-indigo-500 hover:border-indigo-500/50 transition-all shadow-xl group">
-                    <Icon className="w-5 h-5 md:w-7 md:h-7 transition-transform group-hover:scale-110" />
+                  <button key={i} className="p-4 md:p-6 bg-scan-surface border border-scan-border rounded-2xl text-scan-text-muted hover:text-indigo-500 hover:border-indigo-500/50 transition-all shadow-xl group">
+                    <Icon className="w-6 h-6 md:w-9 md:h-9 transition-transform group-hover:scale-110" />
                   </button>
                 ))}
               </div>
             </div>
 
             <div className="space-y-5 md:space-y-8 text-center sm:text-left">
-              <h4 className="text-xs font-black text-scan-text uppercase tracking-[0.4em]">Intelligence</h4>
+              <h4 className="text-xs font-black text-scan-text uppercase tracking-[0.4em]">{t('footer', 'intelligence')}</h4>
               <ul className="space-y-4 md:space-y-6 text-sm md:text-base text-scan-text-muted font-bold">
                 <li className="hover:text-indigo-400 cursor-pointer transition-colors">Ewaba v3.2 Core</li>
                 <li className="hover:text-indigo-400 cursor-pointer transition-colors">Ghost Engine</li>
@@ -638,8 +638,8 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
             </div>
 
             <div className="space-y-5 md:space-y-8 text-center sm:text-left">
-              <h4 className="text-xs font-black text-scan-text uppercase tracking-[0.4em]">Bulletins</h4>
-              <p className="text-sm md:text-base text-scan-text-muted font-medium">Recevez les dernières alertes mondiales.</p>
+              <h4 className="text-xs font-black text-scan-text uppercase tracking-[0.4em]">{t('footer', 'bulletins')}</h4>
+              <p className="text-sm md:text-base text-scan-text-muted font-medium">{t('footer', 'subscribe_msg')}</p>
               <div className="relative group max-w-xs mx-auto sm:mx-0">
                 <input type="email" placeholder="mail@defense.com" className="w-full bg-scan-surface border-2 border-scan-border rounded-[2rem] px-6 py-4 text-sm focus:outline-none focus:border-indigo-600 transition-all font-mono" />
                 <button className="absolute right-2 top-2 p-3 bg-indigo-600 rounded-xl text-scan-text shadow-lg hover:bg-indigo-500 transition-all"><ChevronRight className="w-5 h-5" /></button>
@@ -648,10 +648,10 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
           </div>
 
           <div className="pt-8 md:pt-16 border-t border-scan-border flex flex-col md:flex-row justify-between items-center gap-6">
-            <span className="text-xs text-scan-text-muted font-mono tracking-[0.3em] uppercase font-black opacity-60 text-center">© 2026 HORUSSIGHT CYBER DEFENSE.</span>
+            <span className="text-xs text-scan-text-muted font-mono tracking-[0.3em] uppercase font-black opacity-60 text-center">{t('footer', 'rights')}</span>
             <div className="flex gap-6 md:gap-12 text-xs text-scan-text-muted font-black uppercase tracking-[0.3em]">
-              <span className="hover:text-scan-text cursor-pointer transition-colors">Privacy</span>
-              <span className="hover:text-scan-text cursor-pointer transition-colors">Terms</span>
+              <span className="hover:text-scan-text cursor-pointer transition-colors">{t('footer', 'privacy')}</span>
+              <span className="hover:text-scan-text cursor-pointer transition-colors">{t('footer', 'terms')}</span>
             </div>
           </div>
         </div>
@@ -662,7 +662,7 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
 
 
 
-const ReportView = ({ scanId, onBack, isGuest }: any) => {
+const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
   const [scan, setScan] = useState<any>(null);
   const [analysis, setAnalysis] = useState<AIRiskAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
@@ -878,7 +878,7 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
   if (loading) return (
     <div className="flex flex-col items-center justify-center py-24 space-y-4">
       <Loader2 className="w-12 h-12 text-indigo-600 animate-spin" />
-      <p className="text-scan-text-muted animate-pulse">Aggregating vulnerability data...</p>
+      <p className="text-scan-text-muted animate-pulse">{t('report', 'loading_report')}</p>
     </div>
   );
 
@@ -888,10 +888,10 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
         <AlertTriangle className="w-10 h-10" />
       </div>
       <div className="text-center space-y-2">
-        <h3 className="text-xl font-bold text-scan-text uppercase tracking-widest">Échec du chargement</h3>
-        <p className="text-scan-text-muted max-w-xs">Impossible de récupérer les détails du scan. Il a peut-être été supprimé ou le serveur est inaccessible.</p>
+        <h3 className="text-xl font-bold text-scan-text uppercase tracking-widest">{t('common', 'error')}</h3>
+        <p className="text-scan-text-muted max-w-xs">{t('common', 'error')}</p>
       </div>
-      <Button variant="secondary" onClick={onBack} icon={ChevronRight} className="rotate-180">Retour au Tableau de Bord</Button>
+      <Button variant="secondary" onClick={onBack} icon={ChevronRight} className="rotate-180">{t('report', 'back')}</Button>
     </div>
   );
 
@@ -919,7 +919,7 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
 
               <div className="space-y-2">
                 <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-scan-text">
-                  Scan <span className="text-indigo-500 inline-block transform -rotate-2">Report</span>
+                  {t('report', 'title')}
                 </h1>
                 <div className="flex items-center gap-2 font-mono text-xs md:text-base text-scan-text-muted bg-scan-bg/40 py-2 px-3 md:px-4 rounded-xl border border-scan-border/50 backdrop-blur w-fit max-w-full overflow-hidden">
                   <Globe className="w-4 h-4 text-indigo-400 shrink-0" />
@@ -944,9 +944,9 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
           {/* Metrics row */}
           <div className="grid grid-cols-3 gap-3 md:gap-8">
             {[
-              { label: 'Risque', value: `${analysis?.overallRiskScore || 0}/100`, icon: Shield, color: (analysis?.overallRiskScore || 0) > 60 ? 'text-rose-500' : 'text-emerald-500' },
-              { label: 'Endpoints', value: scan.endpoints?.length || 0, icon: Target, color: 'text-indigo-400' },
-              { label: 'Vulnérabilités', value: scan.vulnerabilities?.length || 0, icon: AlertTriangle, color: 'text-amber-500' }
+              { label: t('report', 'overall_risk'), value: `${analysis?.overallRiskScore || 0}/100`, icon: Shield, color: (analysis?.overallRiskScore || 0) > 60 ? 'text-rose-500' : 'text-emerald-500' },
+              { label: t('report', 'endpoints'), value: scan.endpoints?.length || 0, icon: Target, color: 'text-indigo-400' },
+              { label: t('report', 'vuln_detected'), value: scan.vulnerabilities?.length || 0, icon: AlertTriangle, color: 'text-amber-500' }
             ].map((m, i) => (
               <div key={i} className="text-center space-y-1 md:space-y-2">
                 <div className="flex items-center justify-center gap-1 text-[9px] md:text-[10px] font-black text-scan-text-muted uppercase tracking-[0.2em]">
@@ -968,7 +968,7 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
               <div className="absolute top-0 right-0 p-8">
                 <BrainCircuit className="w-12 h-12 text-indigo-500/20" />
               </div>
-              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500 mb-6 italic">Strategie Expert EWABA</h2>
+              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500 mb-6 italic">{t('report', 'ai_intelligence')}</h2>
               <p className="text-3xl lg:text-5xl font-black text-scan-text tracking-tighter mb-8 leading-[0.95] uppercase">
                 {analysis.simplifiedRiskSummary || "Calcul de l'impact en cours..."}
               </p>
@@ -997,12 +997,11 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
           <div className="space-y-4 relative z-10">
             <div className="flex items-center justify-center gap-3">
               <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-indigo-500/50"></div>
-              <h2 className="text-2xl font-black uppercase tracking-[0.4em] text-scan-text drop-shadow-glow">Séquence Tactical Ghost en cours</h2>
+              <h2 className="text-2xl font-black uppercase tracking-[0.4em] text-scan-text drop-shadow-glow">{t('report', 'scan_in_progress')}</h2>
               <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-indigo-500/50"></div>
             </div>
             <p className="text-scan-text-muted max-w-lg mx-auto text-sm italic font-medium leading-relaxed">
-              "Injection multi-threadée activée. Analyse récursive des vecteurs XSS et SQL. <br />
-              Expert Intelligence EWABA en attente de synchronisation."
+              {t('report', 'in_progress_msg')}
             </p>
           </div>
 
@@ -1013,7 +1012,7 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            <Card title="Remédiation Tactique" icon={AlertTriangle}>
+            <Card title={t('report', 'roadmap')} icon={AlertTriangle}>
               <div className="space-y-12">
                 {!analysis || !analysis.exhaustiveSolutions || analysis.exhaustiveSolutions.length === 0 ? (
                   <div className="text-center py-12 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl">
@@ -1024,7 +1023,7 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
                 ) : (
                   <>
                     <div className="flex flex-wrap gap-2 mb-8 p-1 bg-scan-surface rounded-2xl border border-scan-border/50">
-                      {['Tout', ...new Set(analysis.exhaustiveSolutions.map((s: any) => s.category || 'Sécurité Générale'))].map((cat: any) => (
+                      {[t('common', 'all'), ...new Set(analysis.exhaustiveSolutions.map((s: any) => s.category || 'Sécurité Générale'))].map((cat: any) => (
                         <button
                           key={cat}
                           onClick={() => setFilterCategory(cat)}
@@ -1088,12 +1087,12 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
                                       </div>
                                       <div className="flex flex-wrap items-center gap-6 text-[11px] font-black uppercase tracking-[0.3em] text-scan-text-muted">
                                         <span className="flex items-center gap-2.5 px-3 py-1 bg-scan-bg rounded-lg border border-scan-border shadow-inner"><Tag className="w-4 h-4 text-indigo-500" /> {sol.category}</span>
-                                        <span className="flex items-center gap-2.5 px-3 py-1 bg-scan-bg rounded-lg border border-scan-border shadow-inner"><Shield className="w-4 h-4 text-emerald-500" /> Vérifié EWABA Logic</span>
+                                        <span className="flex items-center gap-2.5 px-3 py-1 bg-scan-bg rounded-lg border border-scan-border shadow-inner"><Shield className="w-4 h-4 text-emerald-500" /> {t('report', 'verified_ewaba')}</span>
                                       </div>
                                     </div>
                                   </div>
                                   <div className="lg:text-right shrink-0 pt-4">
-                                    <p className="text-[10px] font-black text-scan-text-muted uppercase tracking-[0.35em] mb-3 opacity-60">Matrice de Responsabilité</p>
+                                    <p className="text-[10px] font-black text-scan-text-muted uppercase tracking-[0.35em] mb-3 opacity-60">{t('report', 'responsibility_matrix')}</p>
                                     <Badge variant={sol.priorityLevel <= 3 ? 'Critical' : 'Info'}>{sol.responsibleParty}</Badge>
                                   </div>
                                 </div>
@@ -1103,7 +1102,7 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
                                     <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-600/40"></div>
                                     <div className="flex items-center gap-2 text-[11px] font-black text-scan-text-muted uppercase tracking-[0.3em]">
                                       <Zap className="w-4 h-4 text-amber-500 animate-pulse" />
-                                      Action Immédiate Requise
+                                      {t('report', 'immediate_action')}
                                     </div>
                                     <p className="text-lg text-scan-text font-mono leading-relaxed pl-2">{sol.action}</p>
                                   </div>
@@ -1111,7 +1110,7 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="p-4 bg-indigo-600/5 rounded-2xl border border-indigo-600/10 space-y-3">
                                       <div className="flex items-center justify-between">
-                                        <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.35em]">Stratégie de Remédiation</span>
+                                        <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.35em]">{t('report', 'remediation_strategy')}</span>
                                         <div className="flex gap-1.5">
                                           {sol.contactChannels.map((channel: string, i: number) => {
                                             const getIcon = (c: string) => {
@@ -1141,7 +1140,7 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
                                       <p className="text-xs text-indigo-300 font-bold leading-snug">{sol.contactAdvice}</p>
                                     </div>
                                     <div className="p-4 bg-amber-600/5 rounded-2xl border border-amber-600/10 space-y-3">
-                                      <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Précautions de Risque</span>
+                                      <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">{t('report', 'risk_precautions')}</span>
                                       <p className="text-xs text-amber-200/70 italic leading-snug">"{sol.precautions}"</p>
                                     </div>
                                   </div>
@@ -1176,7 +1175,7 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
                                           >
                                             <Copy className="w-3 h-3 group-hover/copy:text-scan-text transition-colors" />
                                           </motion.div>
-                                          Copier le Template
+                                          {t('report', 'copy_template')}
                                           <motion.div
                                             animate={{ x: [0, 5, 0], scale: [1, 1.2, 1] }}
                                             transition={{ repeat: Infinity, duration: 1.5 }}
@@ -1210,13 +1209,13 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
                                       <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                           <BrainCircuit className="w-4 h-4 text-indigo-400" />
-                                          <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">AI Intelligence Insight</span>
+                                          <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">{t('report', 'ai_insight')}</span>
                                         </div>
                                         <button
                                           onClick={() => { setQueryingVuln(null); setAiChatResponse(''); }}
                                           className="text-[9px] font-black text-scan-text-muted hover:text-scan-text uppercase"
                                         >
-                                          Dismiss
+                                          {t('report', 'dismiss')}
                                         </button>
                                       </div>
 
@@ -1236,7 +1235,7 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
                                   <div className="p-5 bg-scan-surface/50 rounded-2xl border border-scan-border space-y-4">
                                     <span className="text-[10px] font-black text-scan-text-muted uppercase tracking-[0.2em] flex items-center gap-2">
                                       <Clock className="w-3 h-3" />
-                                      Execution Checklist
+                                      {t('report', 'execution_checklist')}
                                     </span>
                                     <div className="space-y-3">
                                       {sol.remediationChecklist.map((step: string, i: number) => (
@@ -1287,7 +1286,7 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
 
           <div className="space-y-8">
             <Card
-              title={scan.status === 'In Progress' ? "Tactical Live Stream" : "Intelligence Contextuelle"}
+              title={scan.status === 'In Progress' ? t('report', 'live_stream') : t('report', 'ai_intelligence')}
               icon={scan.status === 'In Progress' ? Activity : BrainCircuit}
               className="border-indigo-500/20 bg-indigo-600/5 shadow-2xl shadow-indigo-950/40 sticky top-12 overflow-visible"
             >
@@ -1351,7 +1350,7 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
                       className="absolute inset-0 bg-indigo-600 pointer-events-none"
                     />
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent"></div>
-                    <p className="text-[10px] text-scan-text-muted uppercase tracking-[0.2em] mb-2 font-bold relative z-10">Index de Risque Global</p>
+                    <p className="text-[10px] text-scan-text-muted uppercase tracking-[0.2em] mb-2 font-bold relative z-10">{t('report', 'risk_index')}</p>
                     <div className="text-6xl font-light text-scan-text tracking-tighter relative z-10">
                       {analysis.overallRiskScore}
                       <span className="text-xl text-scan-text-muted opacity-50 ml-1">/100</span>
@@ -1364,7 +1363,7 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
                   <div className="space-y-3">
                     <h5 className="text-[10px] font-bold text-scan-text-muted uppercase tracking-widest flex items-center gap-2">
                       <Sparkles className="w-3 h-3 text-amber-500" />
-                      RÉSUMÉ SIMPLIFIÉ
+                      {t('report', 'simplified_summary')}
                     </h5>
                     <div className="p-4 bg-amber-500/5 border border-amber-500/10 rounded-2xl">
                       <p className="text-sm text-amber-200/80 leading-relaxed font-medium">"{analysis.simplifiedRiskSummary}"</p>
@@ -1373,7 +1372,7 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
 
                   <div className="space-y-3">
                     <h5 className="text-[10px] font-bold text-scan-text-muted uppercase tracking-widest flex items-center gap-2">
-                      ANALYSE D'IMPACT BUSINESS
+                      {t('report', 'business_impact')}
                     </h5>
                     <p className="text-sm text-scan-text leading-relaxed italic italic font-light">"{analysis.businessImpactSummary}"</p>
                   </div>
@@ -1402,13 +1401,13 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
               )}
             </Card>
 
-            <Card title="Métriques du Scan" icon={Activity}>
+            <Card title={t('report', 'scan_metrics')} icon={Activity}>
               <div className="space-y-4">
                 {[
-                  { label: 'Durée Totale', value: `${((scan.duration || 0) / 1000).toFixed(2)}s` },
-                  { label: 'Endpoints Analysés', value: scan.endpoints?.length || 0 },
-                  { label: 'Niveau de Précision', value: 'Haute-Fidélité (DeepScan)' },
-                  { label: 'Moteur Actif', value: 'Horus Engine v2.4' }
+                  { label: t('report', 'total_duration'), value: `${((scan.duration || 0) / 1000).toFixed(2)}s` },
+                  { label: t('report', 'endpoints'), value: scan.endpoints?.length || 0 },
+                  { label: t('report', 'precision_level'), value: 'Haute-Fidélité (DeepScan)' },
+                  { label: t('report', 'active_engine'), value: 'Horus Engine v2.4' }
                 ].map((m, i) => (
                   <div key={i} className="flex justify-between items-center text-sm">
                     <span className="text-scan-text-muted font-bold text-[10px] uppercase tracking-wider">{m.label}</span>
@@ -1424,33 +1423,33 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
   );
 };
 
-const LogsView = ({ logs }: { logs: any[] }) => {
+const LogsView = ({ logs, t }: { logs: any[], t: any }) => {
   const [selectedLog, setSelectedLog] = useState<any>(null);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <Badge>Real-time Access Monitoring</Badge>
-          <h2 className="text-4xl font-light text-scan-text tracking-tighter mt-2 uppercase">System <span className="text-indigo-500">Logs</span></h2>
+          <Badge>{t('dashboard', 'real_time_access')}</Badge>
+          <h2 className="text-4xl font-light text-scan-text tracking-tighter mt-2 uppercase" dangerouslySetInnerHTML={{ __html: t('logs', 'logs_title') }}></h2>
         </div>
         <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 rounded-full border border-emerald-500/20">
           <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-          <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Live Capture Enabled</span>
+          <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{t('logs', 'live_capture')}</span>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
-          <Card title="Traffic Stream" icon={Terminal}>
+          <Card title={t('logs', 'traffic_stream')} icon={Terminal}>
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="border-b border-scan-border text-[10px] text-scan-text-muted uppercase tracking-widest text-left">
-                    <th className="pb-4 px-4 font-black">Timestamp</th>
-                    <th className="pb-4 px-4 font-black">Event Type</th>
+                    <th className="pb-4 px-4 font-black">{t('dashboard', 'timestamp')}</th>
+                    <th className="pb-4 px-4 font-black">{t('common', 'event_type')}</th>
                     <th className="pb-4 px-4 font-black">Source</th>
-                    <th className="pb-4 px-4 font-black text-right">Action</th>
+                    <th className="pb-4 px-4 font-black text-right">{t('common', 'action')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-scan-border/30">
@@ -1473,7 +1472,7 @@ const LogsView = ({ logs }: { logs: any[] }) => {
                       </td>
                       <td className="py-4 px-4 text-right">
                         <button className="p-1 px-3 text-[9px] uppercase font-black text-scan-text-muted group-hover:text-indigo-400 group-hover:bg-indigo-400/10 rounded-lg transition-all border border-transparent group-hover:border-indigo-500/20">
-                          Inspect
+                          {t('common', 'inspect')}
                         </button>
                       </td>
                     </tr>
@@ -1481,7 +1480,7 @@ const LogsView = ({ logs }: { logs: any[] }) => {
                   {logs.length === 0 && (
                     <tr>
                       <td colSpan={4} className="py-12 text-center text-xs text-scan-text-muted italic">
-                        No active security events detected in the current cycle.
+                        {t('logs', 'no_events')}
                       </td>
                     </tr>
                   )}
@@ -1492,29 +1491,29 @@ const LogsView = ({ logs }: { logs: any[] }) => {
         </div>
 
         <div className="space-y-6">
-          <Card title="Inspector Core" icon={Cpu} className="border-indigo-600/20">
+          <Card title={t('logs', 'inspector_core')} icon={Cpu} className="border-indigo-600/20">
             {selectedLog ? (
               <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
                 <div className="space-y-1">
-                  <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Protocol Header</span>
+                  <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">{t('logs', 'protocol_header')}</span>
                   <h3 className="text-lg font-bold text-scan-text leading-tight">{selectedLog.type}</h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 bg-scan-surface shadow-inner border border-scan-border/30 rounded-xl border border-scan-border">
-                    <p className="text-[9px] text-scan-text-muted font-bold uppercase mb-1">Status</p>
+                    <p className="text-[9px] text-scan-text-muted font-bold uppercase mb-1">{t('logs', 'status') || 'Status'}</p>
                     <p className={`text-[10px] font-black ${selectedLog.result === 'Blocked' ? 'text-rose-500' : 'text-amber-500'}`}>
                       {selectedLog.result.toUpperCase()}
                     </p>
                   </div>
                   <div className="p-3 bg-scan-surface shadow-inner border border-scan-border/30 rounded-xl border border-scan-border">
-                    <p className="text-[9px] text-scan-text-muted font-bold uppercase mb-1">Origin</p>
+                    <p className="text-[9px] text-scan-text-muted font-bold uppercase mb-1">{t('logs', 'origin') || 'Origin'}</p>
                     <p className="text-[10px] font-mono text-scan-text">{selectedLog.source}</p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <p className="text-[9px] text-scan-text-muted font-bold uppercase">Requested Resource</p>
+                  <p className="text-[9px] text-scan-text-muted font-bold uppercase">{t('logs', 'requested_resource') || 'Requested Resource'}</p>
                   <p className="text-[10px] font-mono bg-scan-surface shadow-inner border border-scan-border/30 p-2 rounded-lg border border-scan-border text-indigo-300 break-all">
                     {selectedLog.target}
                   </p>
@@ -1524,7 +1523,7 @@ const LogsView = ({ logs }: { logs: any[] }) => {
                   <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
                   <div className="flex items-center gap-2 mb-2">
                     <CheckCircle2 className="w-3 h-3 text-indigo-400" />
-                    <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Automated Mitigation</span>
+                    <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">{t('logs', 'automated_mitigation') || 'Automated Mitigation'}</span>
                   </div>
                   <p className="text-xs text-scan-text leading-relaxed italic">
                     "{selectedLog.solution}"
@@ -1534,7 +1533,7 @@ const LogsView = ({ logs }: { logs: any[] }) => {
                     transition={{ repeat: Infinity, duration: 2 }}
                     className="mt-4 flex items-center gap-2 text-[9px] font-black text-indigo-500 uppercase tracking-[0.2em] cursor-pointer group-hover:text-indigo-400"
                   >
-                    Deploy Defense Patch <ChevronRight className="w-3 h-3" />
+                    {t('logs', 'deploy_patch') || 'Deploy Defense Patch'} <ChevronRight className="w-3 h-3" />
                   </motion.div>
                 </div>
 
@@ -1547,7 +1546,7 @@ const LogsView = ({ logs }: { logs: any[] }) => {
                 <div className="w-12 h-12 bg-scan-surface/40 shadow-inner rounded-full flex items-center justify-center mx-auto text-scan-text-muted opacity-50">
                   <Activity className="w-6 h-6" />
                 </div>
-                <p className="text-xs text-scan-text-muted">Select a stream event to initialize deep packet inspection.</p>
+                <p className="text-xs text-scan-text-muted">{t('logs', 'select_event') || 'Select a stream event to initialize deep packet inspection.'}</p>
               </div>
             )}
           </Card>
@@ -1579,7 +1578,7 @@ const LogsView = ({ logs }: { logs: any[] }) => {
   );
 };
 
-const AuthPage = ({ onAuthSuccess, theme, toggleTheme }: any) => {
+const AuthPage = ({ onAuthSuccess, theme, toggleTheme, lang, toggleLang, t }: any) => {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -1616,8 +1615,8 @@ const AuthPage = ({ onAuthSuccess, theme, toggleTheme }: any) => {
           <div className="mx-auto w-12 h-12 md:w-14 md:h-14 bg-indigo-600 rounded-xl flex items-center justify-center text-scan-text shadow-xl shadow-indigo-900/40 mb-4">
             <Shield className="w-6 h-6 md:w-7 md:h-7" />
           </div>
-          <h1 className="text-xl md:text-2xl font-bold tracking-tight text-scan-text uppercase tracking-[0.2em]">HorusSight</h1>
-          <p className="text-scan-text-muted text-xs md:text-sm font-black tracking-[0.2em]">{isLogin ? 'AUTHENTIFICATION SÉCURISÉE' : 'INITIALISER PROFIL ANALYSTE'}</p>
+          <h1 className="text-xl md:text-2xl font-bold tracking-tight text-scan-text uppercase tracking-[0.2em]">{t('auth', 'welcome_title') || 'HorusSight'}</h1>
+          <p className="text-scan-text-muted text-xs md:text-sm font-black tracking-[0.2em]">{isLogin ? t('auth', 'login_title') : t('auth', 'signup_title')}</p>
         </div>
 
         <div className="absolute top-6 right-6">
@@ -1634,7 +1633,7 @@ const AuthPage = ({ onAuthSuccess, theme, toggleTheme }: any) => {
 
           <div className="space-y-2">
             <label className="text-sm font-black text-scan-text-muted uppercase tracking-[0.2em] pl-6">
-              {isLogin ? "Identifiant (Nom ou Email)" : "Nom d'utilisateur / Username"}
+              {isLogin ? t('auth', 'username') : t('auth', 'choose_username')}
             </label>
             <input
               type="text"
@@ -1642,37 +1641,37 @@ const AuthPage = ({ onAuthSuccess, theme, toggleTheme }: any) => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              placeholder={isLogin ? 'Ex: alpha_user' : 'Choisissez un nom simple'}
+              placeholder={isLogin ? 'Ex: alpha_user' : 'User'}
             />
           </div>
 
           {!isLogin && (
             <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
-              <label className="text-sm font-black text-scan-text-muted uppercase tracking-[0.2em] pl-6">Email (Facultatif / Optional)</label>
+              <label className="text-sm font-black text-scan-text-muted uppercase tracking-[0.2em] pl-6">{t('auth', 'email')} (Optional)</label>
               <input
                 type="email"
                 className="w-full bg-scan-bg border-2 border-scan-border rounded-2xl md:rounded-[2rem] px-5 py-3 md:px-8 md:py-5 text-scan-text focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-mono text-sm md:text-base shadow-inner"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Ex: mail@test.com (optionnel)"
+                placeholder="Ex: mail@test.com"
               />
             </div>
           )}
 
           <div className="space-y-2">
-            <label className="text-[10px] font-bold text-scan-text-muted uppercase tracking-widest pl-4">Code / Mot de passe</label>
+            <label className="text-[10px] font-bold text-scan-text-muted uppercase tracking-widest pl-4">{t('auth', 'password')}</label>
             <input
               type="password"
               className="w-full bg-scan-bg border border-scan-border rounded-full px-6 py-3 text-scan-text focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-mono text-sm"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              placeholder="Chiffres ou Lettres"
+              placeholder="***"
             />
           </div>
 
           <Button className="w-full py-4 uppercase tracking-[0.2em] text-xs font-black pt-4" loading={loading}>
-            {isLogin ? 'ACCÉDER / LOGIN' : 'CRÉER COMPTE / START'}
+            {isLogin ? t('auth', 'auth_btn') : t('auth', 'init_btn')}
           </Button>
         </form>
 
@@ -1685,7 +1684,7 @@ const AuthPage = ({ onAuthSuccess, theme, toggleTheme }: any) => {
             }}
             className="text-[10px] text-scan-text-muted hover:text-indigo-400 transition-colors uppercase tracking-widest font-bold"
           >
-            {isLogin ? "Pas encore de compte ? S'inscrire" : "Déjà un compte ? Se connecter"}
+            {isLogin ? t('auth', 'switch_sign') : t('auth', 'switch_login')}
           </button>
         </div>
       </Card>
@@ -1705,13 +1704,26 @@ export default function App() {
   const [init, setInit] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
   const [scanLoading, setScanLoading] = useState(false);
+  const [lang, setLang] = useState('en');
+
+  const t = (section: string, key: string) => {
+    return (i18n as any)[lang]?.[section]?.[key] || key;
+  };
+
+  const toggleLang = () => {
+    const newLang = lang === 'en' ? 'fr' : 'en';
+    setLang(newLang);
+    localStorage.setItem('lang', newLang);
+  };
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('token');
     const savedTheme = localStorage.getItem('theme') || 'dark';
+    const savedLang = localStorage.getItem('lang') || 'en';
 
     setTheme(savedTheme);
+    setLang(savedLang);
     if (savedTheme === 'light') document.documentElement.classList.add('light');
 
     if (storedUser && token) {
@@ -1780,11 +1792,11 @@ export default function App() {
   if (!init) return null;
 
   if (view === 'landing' && !user) {
-    return <LandingPage onGuestScan={handleGuestScan} scanLoading={scanLoading} onLogin={() => setView('login')} theme={theme} toggleTheme={toggleTheme} />;
+    return <LandingPage onGuestScan={handleGuestScan} scanLoading={scanLoading} onLogin={() => setView('login')} theme={theme} toggleTheme={toggleTheme} lang={lang} toggleLang={toggleLang} t={t} />;
   }
 
   if (view === 'login' && !user) {
-    return <AuthPage onAuthSuccess={(u: any) => { setUser(u); setView('dashboard'); fetchData(); }} theme={theme} toggleTheme={toggleTheme} />;
+    return <AuthPage onAuthSuccess={(u: any) => { setUser(u); setView('dashboard'); fetchData(); }} theme={theme} toggleTheme={toggleTheme} lang={lang} toggleLang={toggleLang} t={t} />;
   }
 
   return (
@@ -1802,9 +1814,9 @@ export default function App() {
 
             <nav className="space-y-2">
               {[
-                { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
-                { id: 'new-scan', label: 'Attack Simulation', icon: Search },
-                { id: 'logs', label: 'System Logs', icon: Terminal },
+                { id: 'dashboard', label: t('sidebar', 'dashboard'), icon: LayoutDashboard },
+                { id: 'new-scan', label: t('sidebar', 'new_scan'), icon: Search },
+                { id: 'logs', label: t('sidebar', 'terminal'), icon: Terminal },
               ].map((item) => (
                 <button
                   key={item.id}
@@ -1833,7 +1845,7 @@ export default function App() {
               >
                 <div className="flex items-center gap-4">
                   {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-indigo-400" />}
-                  <span className="font-bold text-xs uppercase tracking-widest">{theme === 'dark' ? 'Mode Clair' : 'Mode Sombre'}</span>
+                  <span className="font-bold text-xs uppercase tracking-widest">{theme === 'dark' ? (lang === 'en' ? 'Light Mode' : 'Mode Clair') : (lang === 'en' ? 'Dark Mode' : 'Mode Sombre')}</span>
                 </div>
                 <div className="w-8 h-4 bg-scan-border rounded-full relative">
                   <motion.div
@@ -1860,7 +1872,7 @@ export default function App() {
                 onClick={handleLogout}
                 className="w-full flex items-center justify-center gap-2 py-3 text-[10px] uppercase tracking-[0.2em] font-black text-scan-text-muted hover:text-rose-500 bg-scan-surface shadow-inner border border-scan-border/30 rounded-xl border border-scan-border transition-all hover:bg-rose-500/5 hover:border-rose-500/20"
               >
-                <LogOut className="w-3.5 h-3.5" /> Terminate Link
+                <LogOut className="w-3.5 h-3.5" /> {t('common', 'logout')}
               </button>
             </div>
             <div className="flex items-center justify-between px-2">
@@ -1944,6 +1956,7 @@ export default function App() {
                   setView={setView}
                   onSelectScan={(id: number) => { setActiveScanId(id); setView('report'); }}
                   onNewScan={() => setView('new-scan')}
+                  t={t}
                 />
               </motion.div>
             )}
@@ -1955,7 +1968,7 @@ export default function App() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
               >
-                <NewScan onStartScan={handleStartScan} loading={scanLoading} />
+                <NewScan onStartScan={handleStartScan} loading={scanLoading} t={t} />
               </motion.div>
             )}
 
@@ -1966,7 +1979,7 @@ export default function App() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
               >
-                <LogsView logs={securityLogs} />
+                <LogsView logs={securityLogs} t={t} />
               </motion.div>
             )}
 
@@ -1989,6 +2002,7 @@ export default function App() {
                       fetchData();
                     }
                   }}
+                  t={t}
                 />
               </motion.div>
             )}
