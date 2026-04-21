@@ -3,15 +3,17 @@
 HorusSight - Engine Verification Test
 ======================================
 Simple test to verify the engine architecture is working.
-No external dependencies required beyond what you already have.
+Updated for new project structure: HorusSight/engine/
 """
 
 import sys
 import os
 from pathlib import Path
 
-# Add project to path
-sys.path.insert(0, str(Path(__file__).parent))
+# Add HorusSight directory to path (engine is inside HorusSight/)
+project_root = Path(__file__).parent
+horussight_path = project_root / "HorusSight"
+sys.path.insert(0, str(horussight_path))
 
 # ANSI colors for nice output
 GREEN = '\033[92m'
@@ -90,6 +92,15 @@ def test_imports():
     except Exception as e:
         print_fail(f"SQLi Detector import failed: {e}")
         tests.append(False)
+    
+    # Test 1.5: AI Analyzer (NEW)
+    try:
+        from engine.ai.analyzer import RiskAnalyzer
+        print_pass("AI Analyzer imported")
+        tests.append(True)
+    except Exception as e:
+        print_warn(f"AI Analyzer not yet implemented: {e}")
+        tests.append(True)  # Not required for foundation
     
     return all(tests)
 
@@ -291,16 +302,6 @@ def test_http_client():
             print_fail("Headers missing User-Agent")
             return False
         
-        # Optional: Test actual HTTP request (may fail without internet)
-        try:
-            response = client.get("https://httpbin.org/get", timeout=5)
-            if response.status_code == 200:
-                print_pass("HTTP GET request successful")
-            else:
-                print_warn(f"HTTP GET returned {response.status_code}")
-        except Exception as e:
-            print_warn(f"HTTP test skipped (network issue): {str(e)[:50]}")
-        
         # Test close
         client.close()
         print_pass("Session closed")
@@ -384,6 +385,8 @@ def test_file_structure():
     """Test that all required files exist."""
     print_header("TEST 6: File Structure")
     
+    root = Path(__file__).parent / "HorusSight"
+    
     required_files = [
         "engine/__init__.py",
         "engine/modules/__init__.py",
@@ -397,11 +400,12 @@ def test_file_structure():
         "engine/utils/__init__.py",
         "engine/utils/http_client.py",
         "engine/utils/config.py",
+        "engine/utils/database.py",
         "engine/ai/__init__.py",
+        "engine/ai/analyzer.py",
         "engine/payloads/__init__.py",
     ]
     
-    root = Path(__file__).parent
     all_exist = True
     
     for file_path in required_files:
@@ -410,7 +414,6 @@ def test_file_structure():
             print_pass(f"Found: {file_path}")
         else:
             print_warn(f"Missing: {file_path} (will be needed later)")
-            # Don't fail on missing optional files
     
     # Check essential files (must exist)
     essential = [
@@ -425,6 +428,24 @@ def test_file_structure():
             print_fail(f"ESSENTIAL FILE MISSING: {file_path}")
             all_exist = False
     
+    # Check Next.js frontend structure
+    print_info("\n  Frontend (Next.js) structure:")
+    frontend_files = [
+        "app/page.tsx",
+        "app/layout.tsx",
+        "components/App.tsx",
+        "lib/api.ts",
+        "lib/auth.ts",
+        "lib/scan.ts",
+    ]
+    
+    for file_path in frontend_files:
+        full_path = root / file_path
+        if full_path.exists():
+            print_pass(f"Found: {file_path}")
+        else:
+            print_warn(f"Missing: {file_path}")
+    
     return all_exist
 
 
@@ -434,6 +455,7 @@ def main():
     print(f"{BOLD}{BLUE}╔{'═'*58}╗{RESET}")
     print(f"{BOLD}{BLUE}║{RESET} {BOLD}HorusSight Engine - Architecture Verification{RESET}{' ' * 11}{BOLD}{BLUE}║{RESET}")
     print(f"{BOLD}{BLUE}║{RESET} Foundation: SecureScan AI v5.0 (MIT License){' ' * 13}{BOLD}{BLUE}║{RESET}")
+    print(f"{BOLD}{BLUE}║{RESET} Structure: Next.js + Python Hybrid{' ' * 24}{BOLD}{BLUE}║{RESET}")
     print(f"{BOLD}{BLUE}╚{'═'*58}╝{RESET}")
     
     results = {}
@@ -465,12 +487,11 @@ def main():
     if passed == total:
         print(f"{GREEN}{BOLD}  ✅ ALL TESTS PASSED!{RESET}")
         print(f"\n  {BLUE}𓂀 HorusSight Engine is READY for the next phase.{RESET}")
-        print(f"\n  Next steps for the team:")
-        print(f"    1. Ghost: Complete XSS detector and add more vulnerability types")
-        print(f"    2. EWABA: Build AI risk engine in engine/ai/")
-        print(f"    3. Hackus_Man: Curate elite payloads for CMDi, Path Traversal, SSRF")
-        print(f"    4. Chaminade: Start building the dashboard")
-        print(f"\n  Run a real scan: python main.py --target http://testphp.vulnweb.com")
+        print(f"\n  Project Structure:")
+        print(f"    • Frontend: Next.js (Chaminade)")
+        print(f"    • Backend/Engine: Python (Ghost)")
+        print(f"    • AI Engine: Python (EWABA)")
+        print(f"    • Database: SQLite/PostgreSQL")
         return 0
     else:
         print(f"{RED}{BOLD}  ❌ SOME TESTS FAILED{RESET}")
