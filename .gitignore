@@ -1,3 +1,13 @@
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+
+
 # Environments
 .env
 .venv
