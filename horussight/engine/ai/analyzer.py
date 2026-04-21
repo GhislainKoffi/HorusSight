@@ -5,16 +5,18 @@ from google.genai import types
 from dotenv import load_dotenv
 
 # Chargement de l'environnement
-# On cherche le .env dans HorusSig
+# BASE_DIR = horussight/ (parent de engine/)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-load_dotenv(os.path.join(BASE_DIR, 'HorusSig', '.env'))
+# Cherche .env dans horussight/ puis dans HorusSight/ (racine du projet)
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+load_dotenv(os.path.join(os.path.dirname(BASE_DIR), '.env'), override=False)
 
 class EWABAAnalyzer:
     """
     Expert Web-Application Brain Assistant (EWABA)
     Moteur d'intelligence expert pour HorusSight.
     """
-    def __init__(self, api_key=None, model_id="gemini-1.5-flash"):
+    def __init__(self, api_key=None, model_id="gemini-2.0-flash"):
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         self.model_id = model_id
         

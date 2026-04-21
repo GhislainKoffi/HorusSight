@@ -66,7 +66,7 @@ export async function analyzeVulnerabilities(target: string, vulnerabilities: an
     };
   }
 
-  const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = ai.getGenerativeModel({ model: 'gemini-2.0-flash' });
   const prompt = `Perform an EXHAUSTIVE security analysis for ${target} based on these vulnerabilities: ${JSON.stringify(vulnerabilities)}. Return valid JSON conform to AIRiskAnalysis interface.`;
   
   try {
@@ -99,7 +99,7 @@ export async function analyzeSecurityLogs(logs: any[]) {
     };
   }
   
-  const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = ai.getGenerativeModel({ model: 'gemini-2.0-flash' });
   const prompt = `Analyze these security logs and detect patterns: ${JSON.stringify(logs)}. Return JSON brief.`;
   const result = await model.generateContent(prompt);
   return JSON.parse(result.response.text().replace(/```json|```/g, '').trim());
@@ -117,7 +117,7 @@ export async function assessSecurityPosture(scanHistory: any[]) {
     };
   }
   
-  const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = ai.getGenerativeModel({ model: 'gemini-2.0-flash' });
   const prompt = `Assess security posture from history: ${JSON.stringify(scanHistory)}. Return JSON brief.`;
   const result = await model.generateContent(prompt);
   return JSON.parse(result.response.text().replace(/```json|```/g, '').trim());
@@ -129,7 +129,7 @@ export async function askAboutVulnerability(vuln: any, context: string): Promise
     return `En tant qu'intelligence Ewaba, je peux vous dire que cette vulnérabilité (${vuln.type}) est un peu comme laisser votre trousseau de clés sur la serrure. C'est pratique pour vous, mais ça l'est aussi pour les voleurs. \n\nPour corriger cela, je vous conseille de déplacer ces "clés" dans un endroit sûr (comme un coffre-fort de variables d'environnement) et de restreindre qui peut y accéder. Si vous voulez une alternative, vous pouvez aussi utiliser un service de gestion de secrets comme Vault ou AWS Secrets Manager.`;
   }
   
-  const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = ai.getGenerativeModel({ model: 'gemini-2.0-flash' });
   const prompt = `As EWABA security mentor, explain ${JSON.stringify(vuln)} to a user asking: ${context}. Keep it educational and premium.`;
   const result = await model.generateContent(prompt);
   return result.response.text();

@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   users.push({ ...newUser, password });
 
   return NextResponse.json({
-    token: 'mock_jwt_token',
+    token: `mock_token_${newUser.id}`,
     user: newUser
   });
 }

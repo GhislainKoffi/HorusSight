@@ -79,15 +79,18 @@ export async function POST(request: Request) {
 
       if (code === 0) {
         try {
-          // Robust JSON extraction from the tail of outputData
-          const jsonStartIndex = outputData.lastIndexOf('{');
-          const jsonEndIndex = outputData.lastIndexOf('}');
+          // Robust JSON extraction
+          const startMarker = '===JSON_START===';
+          const endMarker = '===JSON_END===';
+          const jsonStartIndex = outputData.indexOf(startMarker);
+          const jsonEndIndex = outputData.indexOf(endMarker);
           
           if (jsonStartIndex !== -1 && jsonEndIndex !== -1 && jsonEndIndex > jsonStartIndex) {
-            const jsonString = outputData.substring(jsonStartIndex, jsonEndIndex + 1);
+            const jsonString = outputData.substring(jsonStartIndex + startMarker.length, jsonEndIndex);
             const results = JSON.parse(jsonString);
             
             scans[scanIndex].status = 'Completed';
+            scans[scanIndex].duration = Date.now() - new Date(scans[scanIndex].timestamp).getTime();
             scans[scanIndex].vulnerabilities = (results.findings || []).map((f: any) => ({
               type: f.type,
               severity: f.severity,

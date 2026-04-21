@@ -3,6 +3,10 @@ from datetime import datetime
 from engine.core.crawler import Crawler
 from engine.modules.sqli import SQLiDetector
 from engine.modules.xss import XSSScanner
+from engine.modules.ssrf import SSRFScanner
+from engine.modules.cmd_injection import CmdInjectionScanner
+from engine.modules.path_traversal import PathTraversalScanner
+from engine.modules.xxe import XXEScanner
 import concurrent.futures
 from threading import Lock
 from engine.ai.analyzer import EWABAAnalyzer
@@ -18,6 +22,10 @@ class Orchestrator:
         self.http_client = HTTPClient()
         self.sqli_detector = SQLiDetector(self.http_client)
         self.xss_scanner = XSSScanner()
+        self.ssrf_scanner = SSRFScanner()
+        self.cmd_scanner = CmdInjectionScanner()
+        self.pt_scanner = PathTraversalScanner()
+        self.xxe_scanner = XXEScanner()
         self.ewaba = EWABAAnalyzer()
         self.db = Database(db_path)
         self.findings_lock = Lock()
@@ -40,14 +48,16 @@ class Orchestrator:
                     "evidence": res.evidence
                 })
         
-        # 2. Test for SQLi on forms
+        # 2. Test for vulnerabilities on forms (SQLi, Cmd Injection, Path Traversal, XXE)
         for form in page["forms"]:
             action = form["action"]
             for inp in form["inputs"]:
                 param = inp["name"]
                 if not param: continue
                 
-                print(f"LOG:Probe SQLi sur {param} ({url.split('/')[-1]})")
+                print(f"LOG:Probing vulnerabilities on {param} ({url.split('/')[-1]})")
+                
+                # SQLi
                 sqli_findings = self.sqli_detector.detect(action, param, method=form["method"])
                 for finding in sqli_findings:
                     local_findings.append({
@@ -58,7 +68,55 @@ class Orchestrator:
                         "payload": finding.payload,
                         "evidence": finding.evidence
                     })
+                
+                # Command Injection
+                cmd_findings = self.cmd_scanner.detect(action, param, method=form["method"])
+                for finding in cmd_findings:
+                    local_findings.append({
+                        "type": "Command Injection",
+                        "severity": "CRITICAL",
+                        "url": action,
+                        "parameter": param,
+                        "payload": finding.payload,
+                        "evidence": finding.evidence
+                    })
+
+                # Path Traversal
+                pt_findings = self.pt_scanner.detect(action, param, method=form["method"])
+                for finding in pt_findings:
+                    local_findings.append({
+                        "type": "Path Traversal",
+                        "severity": "HIGH",
+                        "url": action,
+                        "parameter": param,
+                        "payload": finding.payload,
+                        "evidence": finding.evidence
+                    })
+
+                # XXE
+                xxe_findings = self.xxe_scanner.detect(action, param, method=form["method"])
+                for finding in xxe_findings:
+                    local_findings.append({
+                        "type": "XML External Entity (XXE)",
+                        "severity": "HIGH",
+                        "url": action,
+                        "parameter": param,
+                        "payload": finding.payload,
+                        "evidence": finding.evidence
+                    })
         
+        # 3. Test for SSRF on URL parameters
+        ssrf_findings = self.ssrf_scanner.scan(url)
+        for finding in ssrf_findings:
+            if finding.vulnerable:
+                local_findings.append({
+                    "type": "Server-Side Request Forgery",
+                    "severity": "CRITICAL",
+                    "url": finding.url_tested,
+                    "payload": finding.payload,
+                    "evidence": finding.evidence
+                })
+
         return local_findings
 
     def run(self, target_url, user_id="system"):

@@ -86,9 +86,9 @@ const Button = ({ children, onClick, variant = 'primary', icon: Icon, loading, c
     <button
       onClick={onClick}
       disabled={disabled || loading}
-      className={`px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-base ${variants[variant]} ${className}`}
+      className={`px-5 py-3 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-bold flex items-center justify-center gap-2 md:gap-3 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base ${variants[variant]} ${className}`}
     >
-      {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : Icon && <Icon className="w-5 h-5" />}
+      {loading ? <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" /> : Icon && <Icon className="w-4 h-4 md:w-5 md:h-5" />}
       {children}
     </button>
   );
@@ -98,13 +98,13 @@ const Button = ({ children, onClick, variant = 'primary', icon: Icon, loading, c
 };
 
 const Card = ({ children, title, subtitle, icon: Icon, className = '' }: any) => (
-  <div className={`scan-card p-10 ${className}`}>
+  <div className={`scan-card p-4 sm:p-6 md:p-8 lg:p-10 ${className}`}>
     {(title || Icon) && (
-      <div className="flex items-center gap-4 mb-8">
-        {Icon && <div className="p-3 bg-scan-surface/40 shadow-inner rounded-2xl text-indigo-400 shadow-inner"><Icon className="w-6 h-6" /></div>}
+      <div className="flex items-center gap-3 mb-5 md:mb-8">
+        {Icon && <div className="p-2 md:p-3 bg-scan-surface/40 shadow-inner rounded-xl md:rounded-2xl text-indigo-400"><Icon className="w-5 h-5 md:w-6 md:h-6" /></div>}
         <div>
-          <h3 className="text-sm font-black text-scan-text-muted uppercase tracking-[0.2em]">{title}</h3>
-          {subtitle && <p className="text-sm text-scan-text-muted mt-2">{subtitle}</p>}
+          <h3 className="text-xs md:text-sm font-black text-scan-text-muted uppercase tracking-[0.2em]">{title}</h3>
+          {subtitle && <p className="text-xs md:text-sm text-scan-text-muted mt-1 md:mt-2">{subtitle}</p>}
         </div>
       </div>
     )}
@@ -137,30 +137,29 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView }: a
   const criticalVuls = scans.reduce((acc: number, s: any) => acc + (s.vulnerabilities?.filter((v: any) => v.severity === 'Critical').length || 0), 0);
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <header className="relative py-12 mb-12 border-b border-scan-border/40 group overflow-hidden">
-        {/* Subtle Background Glow */}
+    <div className="space-y-5 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <header className="relative py-6 md:py-12 mb-6 md:mb-12 border-b border-scan-border/40 group overflow-hidden">
         <div className="absolute -top-24 -left-24 w-64 h-64 bg-indigo-600/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-indigo-600/10 transition-colors" />
 
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 mb-2">
+        <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between relative z-10">
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 mb-1">
               <div className="flex -space-x-2">
-                <div className="w-6 h-6 rounded-full border-2 border-scan-bg bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]"></div>
-                <div className="w-6 h-6 rounded-full border-2 border-scan-bg bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.4)] animate-pulse"></div>
+                <div className="w-4 h-4 md:w-6 md:h-6 rounded-full border-2 border-scan-bg bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]"></div>
+                <div className="w-4 h-4 md:w-6 md:h-6 rounded-full border-2 border-scan-bg bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.4)] animate-pulse"></div>
               </div>
-              <span className="text-[10px] font-black text-scan-text-muted uppercase tracking-[0.4em] italic ml-2">Digital Fortress Status: Active</span>
+              <span className="text-[9px] md:text-[10px] font-black text-scan-text-muted uppercase tracking-[0.3em] italic">Digital Fortress: Active</span>
             </div>
-            <h1 className="text-6xl md:text-8xl font-black text-scan-text tracking-tighter uppercase leading-[0.85] drop-shadow-lg">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black text-scan-text tracking-tighter uppercase leading-[0.85] drop-shadow-lg">
               Stratégie <span className="text-indigo-500">Globale</span>
             </h1>
-            <p className="text-scan-text-muted text-xl max-w-2xl font-medium border-l-2 border-indigo-600/30 pl-6 py-1">
-              Surveillance proactive et flux en temps réel de votre posture de sécurité réseau.
+            <p className="text-sm md:text-xl text-scan-text-muted max-w-2xl font-medium border-l-2 border-indigo-600/30 pl-4 py-1">
+              Surveillance proactive de votre posture de sécurité réseau.
             </p>
           </div>
-          <div className="flex gap-4">
-            <Button variant="secondary" icon={Terminal} onClick={() => setView('logs')} className="px-6 py-4 uppercase tracking-widest text-xs">Vérifier Logs</Button>
-            <Button icon={Search} onClick={onNewScan} guided className="px-10 py-5 text-lg shadow-indigo-600/20">Initier Scan</Button>
+          <div className="flex gap-3">
+            <Button variant="secondary" icon={Terminal} onClick={() => setView('logs')} className="!px-4 !py-3 uppercase tracking-widest !text-xs">Logs</Button>
+            <Button icon={Search} onClick={onNewScan} guided className="!px-6 !py-3 md:!px-10 md:!py-4">Initier Scan</Button>
           </div>
         </div>
       </header>
@@ -175,28 +174,28 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView }: a
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-8">
         {[
           { label: 'Total Scans', value: scans.length, icon: Target, color: 'text-indigo-400', gradient: 'from-indigo-600/5' },
           { label: 'Active Targets', value: new Set(scans.map((s: any) => s.target)).size, icon: Activity, color: 'text-emerald-400', gradient: 'from-emerald-600/5' },
-          { label: 'Vulnerabilities', value: totalVuls, icon: AlertTriangle, color: 'text-orange-400', gradient: 'from-orange-600/5' },
-          { label: 'Critical Risks', value: criticalVuls, icon: Shield, color: 'text-rose-500', gradient: 'from-rose-600/5' },
+          { label: 'Vuln.', value: totalVuls, icon: AlertTriangle, color: 'text-orange-400', gradient: 'from-orange-600/5' },
+          { label: 'Critical', value: criticalVuls, icon: Shield, color: 'text-rose-500', gradient: 'from-rose-600/5' },
         ].map((stat, i) => (
           <Card key={i} className="hover:border-indigo-500/30 group relative">
             <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${stat.gradient} to-transparent rounded-bl-[100px] -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
             <div className="flex items-center justify-between relative z-10">
-              <div className="space-y-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-scan-text-muted">{stat.label}</p>
-                <p className={`text-5xl font-bold text-scan-text tracking-tighter`}>{stat.value}</p>
+              <div className="space-y-1 md:space-y-4">
+                <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-scan-text-muted">{stat.label}</p>
+                <p className={`text-3xl md:text-5xl font-bold text-scan-text tracking-tighter`}>{stat.value}</p>
               </div>
-              <div className={`p-4 rounded-2xl bg-scan-bg border border-scan-border shadow-inner transition-transform group-hover:scale-110 group-hover:rotate-6 ${stat.color}`}>
-                <stat.icon className="w-8 h-8" />
+              <div className={`p-2 md:p-4 rounded-xl md:rounded-2xl bg-scan-bg border border-scan-border shadow-inner transition-transform group-hover:scale-110 group-hover:rotate-6 ${stat.color}`}>
+                <stat.icon className="w-5 h-5 md:w-8 md:h-8" />
               </div>
             </div>
-            <div className="mt-8 pt-6 border-t border-scan-border/40 flex items-center justify-between">
-              <span className="text-[9px] font-black uppercase tracking-widest text-scan-text-muted">Analyse en temps réel</span>
+            <div className="mt-4 md:mt-8 pt-3 md:pt-6 border-t border-scan-border/40 flex items-center justify-between">
+              <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-scan-text-muted">Temps réel</span>
               <div className="flex gap-1">
-                {[1, 2, 3].map(j => <div key={j} className={`w-1 h-3 rounded-full bg-current ${stat.color} opacity-40 animate-pulse`} style={{ animationDelay: `${j * 0.2}s` }} />)}
+                {[1, 2, 3].map(j => <div key={j} className={`w-1 h-2 md:h-3 rounded-full bg-current ${stat.color} opacity-40 animate-pulse`} style={{ animationDelay: `${j * 0.2}s` }} />)}
               </div>
             </div>
           </Card>
@@ -391,20 +390,20 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
 
       {/* Nav */}
       <nav className="fixed top-0 left-0 w-full z-50 bg-scan-bg/80 backdrop-blur-xl border-b border-scan-border/50">
-        <div className="max-w-[1700px] mx-auto px-10 py-8 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Shield className="w-12 h-12 text-indigo-600" />
-            <span className="font-black text-3xl tracking-[0.2em] uppercase text-scan-text">HorusSight</span>
+        <div className="max-w-[1700px] mx-auto px-4 md:px-8 lg:px-10 py-4 md:py-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Shield className="w-7 h-7 md:w-10 md:h-10 text-indigo-600" />
+            <span className="font-black text-lg md:text-2xl lg:text-3xl tracking-[0.15em] uppercase text-scan-text">HorusSight</span>
           </div>
-          <div className="flex items-center gap-8">
-            <button onClick={onLogin} className="text-sm font-black uppercase tracking-widest text-scan-text-muted hover:text-scan-text transition-colors">Base de Logique</button>
+          <div className="flex items-center gap-3 md:gap-6">
+            <button onClick={onLogin} className="hidden sm:block text-xs font-black uppercase tracking-widest text-scan-text-muted hover:text-scan-text transition-colors">Connexion</button>
             <button
               onClick={toggleTheme}
-              className="p-3 text-scan-text-muted hover:text-scan-accent transition-colors bg-scan-surface border border-scan-border rounded-2xl"
+              className="p-2 md:p-3 text-scan-text-muted hover:text-scan-accent transition-colors bg-scan-surface border border-scan-border rounded-xl md:rounded-2xl"
             >
-              {theme === 'dark' ? <Sun className="w-7 h-7 text-amber-400" /> : <Moon className="w-7 h-7 text-indigo-400" />}
+              {theme === 'dark' ? <Sun className="w-5 h-5 md:w-6 md:h-6 text-amber-400" /> : <Moon className="w-5 h-5 md:w-6 md:h-6 text-indigo-400" />}
             </button>
-            <Button onClick={onLogin} className="px-12 py-5 text-lg">Établir Profil</Button>
+            <Button onClick={onLogin} className="!px-4 !py-2 md:!px-8 md:!py-3 !text-xs md:!text-sm">Profil</Button>
           </div>
         </div>
       </nav>
@@ -429,7 +428,7 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
           </motion.div>
         </AnimatePresence>
 
-        <div className="max-w-[1700px] mx-auto px-10 relative z-20 w-full pt-20">
+        <div className="max-w-[1700px] mx-auto px-4 md:px-8 lg:px-10 relative z-20 w-full pt-20">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
@@ -437,38 +436,38 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 80 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="max-w-4xl space-y-12"
+              className="max-w-4xl space-y-5 md:space-y-10 text-center md:text-left"
             >
-              <div className="flex items-center gap-4">
-                <Badge variant="High" className="py-2 px-6 text-sm uppercase tracking-widest ont-black">{slides[currentSlide].badge}</Badge>
-                <div className="h-[1px] w-12 bg-indigo-500"></div>
+              <div className="flex items-center justify-center md:justify-start gap-4">
+                <Badge variant="High" className="py-1 px-4 text-xs uppercase tracking-widest font-black">{slides[currentSlide].badge}</Badge>
+                <div className="h-[1px] w-8 bg-indigo-500 hidden sm:block"></div>
               </div>
               <h1
-                className="text-7xl md:text-9xl font-black text-scan-text tracking-tighter leading-[0.85] uppercase drop-shadow-2xl"
+                className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-black text-scan-text tracking-tighter leading-[0.85] uppercase drop-shadow-2xl"
                 dangerouslySetInnerHTML={{ __html: slides[currentSlide].title }}
               />
-              <p className="text-2xl text-scan-text-muted leading-relaxed max-w-2xl font-medium">
+              <p className="text-base md:text-xl lg:text-2xl text-scan-text-muted leading-relaxed max-w-2xl font-medium mx-auto md:mx-0">
                 {slides[currentSlide].desc}
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-6 pt-4">
-                <Button onClick={onLogin} className="px-16 py-7 text-xl shadow-[0_0_30px_rgba(79,70,229,0.3)]">
-                  Établir Profil Sécurisé
+              <div className="flex flex-col sm:flex-row gap-4 pt-2 items-center md:items-start">
+                <Button onClick={onLogin} className="w-full sm:w-auto !px-8 !py-4 md:!px-12 md:!py-5 !text-base md:!text-lg shadow-[0_0_30px_rgba(79,70,229,0.3)]">
+                  Profil Sécurisé
                 </Button>
-                <Button variant="secondary" onClick={() => scrollToId('quick-scan')} className="px-12 py-7 text-xl border-indigo-500/20 group">
-                  Lancement Rapide <ChevronRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+                <Button variant="secondary" onClick={() => scrollToId('quick-scan')} className="w-full sm:w-auto !px-8 !py-4 md:!px-10 md:!py-5 !text-base md:!text-lg border-indigo-500/20 group">
+                  Lancement Rapide <ChevronRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
                 </Button>
               </div>
 
-              <div className="flex items-center gap-6 pt-10">
-                <div className="flex -space-x-5">
-                  {[1, 2, 3, 4, 5].map(i => (
-                    <div key={i} className="w-14 h-14 rounded-full border-4 border-scan-border bg-slate-800 flex items-center justify-center overflow-hidden shadow-xl">
+              <div className="flex items-center justify-center md:justify-start gap-4 pt-4">
+                <div className="flex -space-x-3">
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border-4 border-scan-border bg-slate-800 flex items-center justify-center overflow-hidden shadow-xl">
                       <img src={`https://i.pravatar.cc/150?img=${i + 20}`} alt="user" className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>
-                <p className="text-base font-bold text-scan-text-muted uppercase tracking-[0.2em] italic">+2,500 experts font confiance à HorusSight</p>
+                <p className="text-xs md:text-sm font-bold text-scan-text-muted uppercase tracking-[0.15em] italic">+2,500 experts font confiance</p>
               </div>
             </motion.div>
           </AnimatePresence>
@@ -499,39 +498,38 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
         </motion.button>
       </header>
 
-      {/* NEW: Tactical Quick Scan Section */}
-      <section id="quick-scan" className="py-40 bg-scan-surface relative overflow-hidden">
+      {/* Quick Scan Section */}
+      <section id="quick-scan" className="py-12 md:py-24 lg:py-40 bg-scan-surface relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_50%,rgba(79,70,229,0.05),transparent_50%)]"></div>
-        <div className="max-w-[1700px] mx-auto px-10 relative z-10">
-          <div className="bg-scan-bg/40 backdrop-blur-3xl border border-scan-border/60 rounded-[4rem] p-20 shadow-3xl flex flex-col lg:flex-row items-center justify-between gap-20 group/scan relative">
-            <div className="absolute -inset-1 bg-indigo-500/10 rounded-[4rem] blur-2xl opacity-0 group-hover/scan:opacity-100 transition-opacity duration-1000"></div>
+        <div className="max-w-[1700px] mx-auto px-4 md:px-8 lg:px-10 relative z-10">
+          <div className="bg-scan-bg/40 backdrop-blur-3xl border border-scan-border/60 rounded-2xl md:rounded-[4rem] p-6 md:p-12 lg:p-20 shadow-3xl flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-16 group/scan relative">
+            <div className="absolute -inset-1 bg-indigo-500/10 rounded-2xl md:rounded-[4rem] blur-2xl opacity-0 group-hover/scan:opacity-100 transition-opacity duration-1000"></div>
 
-            <div className="max-w-xl space-y-8 relative">
+            <div className="max-w-xl space-y-4 md:space-y-8 relative text-center lg:text-left">
               <div className="inline-flex items-center gap-3 px-4 py-2 bg-indigo-500/10 rounded-full border border-indigo-500/20">
                 <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
                 <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">Module Ghost Infiltration</span>
               </div>
-              <h2 className="text-6xl font-black text-scan-text uppercase tracking-tighter leading-tight">Lancer une Infiltration <span className="text-indigo-500 underline decoration-indigo-500/20 underline-offset-8">Tactique</span></h2>
-              <p className="text-xl text-scan-text-muted leading-relaxed font-medium">
-                Saisissez l'URL cible pour initier une simulation d'attaque non-intrusive. Recevez un rapport IA EWABA en quelques secondes.
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black text-scan-text uppercase tracking-tighter leading-tight">Lancer une Infiltration <span className="text-indigo-500 underline decoration-indigo-500/20 underline-offset-8">Tactique</span></h2>
+              <p className="text-sm md:text-base lg:text-xl text-scan-text-muted leading-relaxed font-medium">
+                Saisissez l'URL cible pour initier une simulation d'attaque non-intrusive.
               </p>
             </div>
 
-            <div className="w-full lg:w-1/2 relative group px-4">
-              <div className="absolute -inset-4 bg-gradient-to-r from-indigo-500/20 to-violet-600/20 rounded-[4rem] opacity-0 group-hover:opacity-100 blur transition duration-700"></div>
-              <div className="relative">
+            <div className="w-full lg:w-1/2 relative px-0 md:px-4">
+              <div className="flex flex-col gap-3 md:gap-0 md:relative">
                 <input
                   type="url"
                   placeholder="https://votre-infrastructure.com"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  className="w-full bg-scan-bg border-2 border-scan-border rounded-[3rem] py-10 px-14 text-scan-text focus:outline-none focus:border-indigo-600 transition-all font-mono text-2xl shadow-inner group-hover:bg-scan-surface/40"
+                  className="w-full bg-scan-bg border-2 border-scan-border rounded-2xl md:rounded-[3rem] py-4 md:py-10 px-6 md:px-14 text-scan-text focus:outline-none focus:border-indigo-600 transition-all font-mono text-base md:text-xl shadow-inner"
                 />
-                <div className="absolute right-5 top-5">
+                <div className="md:absolute md:right-5 md:top-5">
                   <Button
                     guided={url.length > 5}
                     loading={scanLoading}
-                    className="py-6 px-14 text-xl shadow-2xl"
+                    className="w-full md:w-auto !py-3 md:!py-6 !px-8 md:!px-14 !text-base md:!text-xl shadow-2xl"
                     onClick={() => onGuestScan(url)}
                     icon={Target}
                   >
@@ -539,17 +537,17 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
                   </Button>
                 </div>
               </div>
-              <p className="mt-8 text-center text-[10px] uppercase tracking-[0.4em] text-scan-text-muted font-bold opacity-40">Protocole de guest activé - Isolation Temporaire</p>
+              <p className="mt-4 text-center text-[10px] uppercase tracking-[0.4em] text-scan-text-muted font-bold opacity-40">Protocole guest — Isolation Temporaire</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Enhanced Features Section */}
-      <section id="features-section" className="py-60 relative overflow-hidden">
+      {/* Features Section */}
+      <section id="features-section" className="py-16 md:py-32 lg:py-60 relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-600/5 rounded-full blur-[120px] -z-10"></div>
-        <div className="max-w-[1700px] mx-auto px-10">
-          <div className="grid lg:grid-cols-3 gap-12">
+        <div className="max-w-[1700px] mx-auto px-4 md:px-8 lg:px-10">
+          <div className="grid lg:grid-cols-3 gap-6 md:gap-10 lg:gap-12">
             {[
               { title: 'IA EWABA V3.2', desc: 'Analyse neuronale profonde basée sur 15 ans d\'historique de cyber-attaques.', icon: BrainCircuit, color: 'indigo' },
               { title: 'Zéro Faux Positifs', desc: 'Chaque vulnérabilité est validée par notre moteur avant d\'être reportée.', icon: Shield, color: 'blue' },
@@ -557,21 +555,16 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
             ].map((f, i) => (
               <motion.div
                 key={i}
-                whileHover={{ y: -20, scale: 1.02 }}
+                whileHover={{ y: -10, scale: 1.01 }}
                 className="group relative"
               >
-                <div className="absolute -inset-[2px] bg-gradient-to-br from-indigo-500/50 to-transparent rounded-[3.5rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm"></div>
-                <div className="relative space-y-10 bg-scan-surface/40 backdrop-blur-xl p-16 rounded-[3.5rem] border border-scan-border/50 hover:border-indigo-500/30 transition-all duration-500 shadow-2xl h-full">
-                  <div className="w-24 h-24 rounded-3xl bg-indigo-600/10 flex items-center justify-center text-indigo-500 group-hover:bg-indigo-600 group-hover:text-scan-text transition-all duration-500 shadow-xl border border-indigo-600/20">
-                    <f.icon className="w-12 h-12" />
+                <div className="absolute -inset-[2px] bg-gradient-to-br from-indigo-500/50 to-transparent rounded-[2rem] md:rounded-[3.5rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm"></div>
+                <div className="relative space-y-6 md:space-y-10 bg-scan-surface/40 backdrop-blur-xl p-8 md:p-12 lg:p-16 rounded-[2rem] md:rounded-[3.5rem] border border-scan-border/50 hover:border-indigo-500/30 transition-all duration-500 shadow-2xl h-full text-center lg:text-left">
+                  <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-2xl md:rounded-3xl bg-indigo-600/10 flex items-center justify-center text-indigo-500 group-hover:bg-indigo-600 group-hover:text-scan-text transition-all duration-500 shadow-xl border border-indigo-600/20 mx-auto lg:mx-0">
+                    <f.icon className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12" />
                   </div>
-                  <h3 className="text-4xl font-black text-scan-text uppercase tracking-tight leading-tight">{f.title}</h3>
-                  <p className="text-xl text-scan-text-muted leading-relaxed font-medium opacity-80">{f.desc}</p>
-                  <div className="pt-6">
-                    <span className="inline-flex items-center gap-2 text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-opacity">
-                      Voir Protocole <ChevronRight className="w-3 h-3" />
-                    </span>
-                  </div>
+                  <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-scan-text uppercase tracking-tight leading-tight">{f.title}</h3>
+                  <p className="text-sm md:text-base lg:text-xl text-scan-text-muted leading-relaxed font-medium opacity-80">{f.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -580,36 +573,34 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
       </section>
 
       {/* Cyber Philosophy Section */}
-      <section className="py-60 bg-scan-bg relative overflow-hidden">
+      <section className="py-16 md:py-32 lg:py-60 bg-scan-bg relative overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:60px_60px] opacity-40"></div>
-        <div className="max-w-[1700px] mx-auto px-10 relative z-10">
-          <div className="text-center space-y-10 mb-40">
-            <div className="inline-block px-10 py-4 bg-scan-surface border border-scan-border rounded-full shadow-2xl">
-              <span className="text-[10px] font-black uppercase tracking-[0.8em] text-indigo-500">Architecture & Logique</span>
+        <div className="max-w-[1700px] mx-auto px-4 md:px-8 lg:px-10 relative z-10">
+          <div className="text-center space-y-5 md:space-y-10 mb-12 md:mb-24 lg:mb-40">
+            <div className="inline-block px-6 py-3 md:px-10 md:py-4 bg-scan-surface border border-scan-border rounded-full shadow-2xl">
+              <span className="text-[10px] font-black uppercase tracking-[0.8em] text-indigo-500">Architecture &amp; Logique</span>
             </div>
-            <h2 className="text-7xl md:text-9xl font-black text-scan-text uppercase tracking-tighter leading-none italic">
+            <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-black text-scan-text uppercase tracking-tighter leading-none italic">
               De la <span className="text-indigo-500 relative">Sonde<span className="absolute -bottom-2 left-0 w-full h-2 bg-indigo-500/10"></span></span> à la Protection
             </h2>
-            <p className="text-scan-text-muted max-w-3xl mx-auto text-2xl font-medium opacity-70">
+            <p className="text-scan-text-muted max-w-3xl mx-auto text-base md:text-xl lg:text-2xl font-medium opacity-70">
               Une transparence numérique totale, propulsée par un cycle de détection intensif.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-6 md:gap-10">
             {[
               { step: '01', title: 'Cartographie Ghost', desc: 'Identifie chaque point d\'entrée actif sans jamais perturber le flux utilisateur.', icon: Search },
               { step: '02', title: 'Analyse Intensive', desc: 'Ewaba confronte les patterns à notre base mondiale de menaces en temps réel.', icon: Cpu },
               { step: '03', title: 'Roadmap Défense', desc: 'Un plan de remédiation complet avec correctifs prêts à être déployés.', icon: LayoutDashboard },
             ].map((s, i) => (
-              <div key={i} className="flex flex-col h-full bg-scan-surface/20 border border-scan-border rounded-[3rem] p-16 relative overflow-hidden group hover:bg-scan-surface/40 transition-all duration-700">
-                <div className="text-6xl font-black text-scan-text opacity-10 mb-12 font-mono group-hover:text-indigo-500 transition-colors">{s.step}</div>
-                <div className="w-20 h-20 rounded-2xl bg-indigo-600/5 flex items-center justify-center text-indigo-400 mb-10 border border-indigo-600/10 transition-colors group-hover:border-indigo-500/40">
-                  <s.icon className="w-10 h-10" />
+              <div key={i} className="flex flex-col h-full bg-scan-surface/20 border border-scan-border rounded-2xl md:rounded-[3rem] p-8 md:p-12 lg:p-16 relative overflow-hidden group hover:bg-scan-surface/40 transition-all duration-700 text-center md:text-left">
+                <div className="text-4xl md:text-6xl font-black text-scan-text opacity-10 mb-6 md:mb-12 font-mono group-hover:text-indigo-500 transition-colors">{s.step}</div>
+                <div className="w-14 h-14 md:w-20 md:h-20 rounded-2xl bg-indigo-600/5 flex items-center justify-center text-indigo-400 mb-6 md:mb-10 border border-indigo-600/10 transition-colors group-hover:border-indigo-500/40 mx-auto md:mx-0">
+                  <s.icon className="w-7 h-7 md:w-10 md:h-10" />
                 </div>
-                <h4 className="text-3xl font-black text-scan-text mb-6 uppercase tracking-wide leading-tight group-hover:text-indigo-500 transition-colors">{s.title}</h4>
-                <p className="text-lg text-scan-text-muted leading-relaxed font-medium mb-auto">{s.desc}</p>
-
-                <div className="absolute -bottom-2 -right-2 w-24 h-24 bg-indigo-600/5 rounded-full blur-2xl group-hover:bg-indigo-600/20 transition-all"></div>
+                <h4 className="text-xl md:text-2xl lg:text-3xl font-black text-scan-text mb-4 uppercase tracking-wide leading-tight group-hover:text-indigo-500 transition-colors">{s.title}</h4>
+                <p className="text-sm md:text-base lg:text-lg text-scan-text-muted leading-relaxed font-medium mb-auto">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -617,57 +608,58 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme }: 
       </section>
 
       {/* Footer */}
-      <footer className="py-40 bg-scan-bg">
-        <div className="max-w-[1700px] mx-auto px-10 space-y-32">
-          <div className="grid md:grid-cols-4 gap-20">
-            <div className="col-span-2 space-y-12">
-              <div className="flex items-center gap-6">
-                <Shield className="w-16 h-16 text-indigo-600" />
-                <span className="font-black text-4xl tracking-[0.2em] uppercase text-scan-text">HorusSight</span>
+      <footer className="py-12 md:py-24 lg:py-40 bg-scan-bg">
+        <div className="max-w-[1700px] mx-auto px-4 md:px-8 lg:px-10 space-y-10 md:space-y-20 lg:space-y-32">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 lg:gap-20">
+            <div className="sm:col-span-2 space-y-6 md:space-y-10 text-center sm:text-left">
+              <div className="flex items-center gap-4 justify-center sm:justify-start">
+                <Shield className="w-10 h-10 md:w-14 md:h-14 text-indigo-600" />
+                <span className="font-black text-2xl md:text-3xl lg:text-4xl tracking-[0.2em] uppercase text-scan-text">HorusSight</span>
               </div>
-              <p className="text-2xl text-scan-text-muted leading-relaxed max-w-2xl font-medium">
-                Démocratiser la cybersécurité grâce à une intelligence artificielle évolutive et totalement transparente.
+              <p className="text-sm md:text-base lg:text-xl text-scan-text-muted leading-relaxed max-w-sm mx-auto sm:mx-0 font-medium">
+                Démocratiser la cybersécurité grâce à une intelligence artificielle évolutive.
               </p>
-              <div className="flex gap-8">
+              <div className="flex gap-4 md:gap-6 justify-center sm:justify-start">
                 {[Github, Twitter, Mail, Slack].map((Icon, i) => (
-                  <button key={i} className="p-6 bg-scan-surface border border-scan-border rounded-3xl text-scan-text-muted hover:text-indigo-500 hover:border-indigo-500/50 transition-all shadow-xl group">
-                    <Icon className="w-8 h-8 transition-transform group-hover:scale-110" />
+                  <button key={i} className="p-3 md:p-5 bg-scan-surface border border-scan-border rounded-2xl text-scan-text-muted hover:text-indigo-500 hover:border-indigo-500/50 transition-all shadow-xl group">
+                    <Icon className="w-5 h-5 md:w-7 md:h-7 transition-transform group-hover:scale-110" />
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="space-y-10">
+            <div className="space-y-5 md:space-y-8 text-center sm:text-left">
               <h4 className="text-xs font-black text-scan-text uppercase tracking-[0.4em]">Intelligence</h4>
-              <ul className="space-y-8 text-lg text-scan-text-muted font-bold">
+              <ul className="space-y-4 md:space-y-6 text-sm md:text-base text-scan-text-muted font-bold">
                 <li className="hover:text-indigo-400 cursor-pointer transition-colors">Ewaba v3.2 Core</li>
                 <li className="hover:text-indigo-400 cursor-pointer transition-colors">Ghost Engine</li>
                 <li className="hover:text-indigo-400 cursor-pointer transition-colors">Vulnerability DB</li>
               </ul>
             </div>
 
-            <div className="space-y-10">
+            <div className="space-y-5 md:space-y-8 text-center sm:text-left">
               <h4 className="text-xs font-black text-scan-text uppercase tracking-[0.4em]">Bulletins</h4>
-              <p className="text-lg text-scan-text-muted font-medium mb-8">Recevez les dernières alertes mondiales.</p>
-              <div className="relative group">
-                <input type="email" placeholder="mail@defense.com" className="w-full bg-scan-surface border-2 border-scan-border rounded-[2rem] px-10 py-6 text-lg focus:outline-none focus:border-indigo-600 transition-all font-mono" />
-                <button className="absolute right-3 top-3 p-4 bg-indigo-600 rounded-2xl text-scan-text shadow-2xl shadow-indigo-600/40 hover:bg-indigo-500 transition-all"><ChevronRight className="w-8 h-8" /></button>
+              <p className="text-sm md:text-base text-scan-text-muted font-medium">Recevez les dernières alertes mondiales.</p>
+              <div className="relative group max-w-xs mx-auto sm:mx-0">
+                <input type="email" placeholder="mail@defense.com" className="w-full bg-scan-surface border-2 border-scan-border rounded-[2rem] px-6 py-4 text-sm focus:outline-none focus:border-indigo-600 transition-all font-mono" />
+                <button className="absolute right-2 top-2 p-3 bg-indigo-600 rounded-xl text-scan-text shadow-lg hover:bg-indigo-500 transition-all"><ChevronRight className="w-5 h-5" /></button>
               </div>
             </div>
           </div>
 
-          <div className="pt-20 border-t border-scan-border flex flex-col md:flex-row justify-between items-center gap-10">
-            <span className="text-xs text-scan-text-muted font-mono tracking-[0.5em] uppercase font-black opacity-60">© 2026 HORUSSIGHT CYBER DEFENSE. PROTECTING FLOWS.</span>
-            <div className="flex gap-12 text-xs text-scan-text-muted font-black uppercase tracking-[0.4em]">
-              <span className="hover:text-scan-text cursor-pointer transition-colors">Privacy Protocol</span>
-              <span className="hover:text-scan-text cursor-pointer transition-colors">Access Agreement</span>
+          <div className="pt-8 md:pt-16 border-t border-scan-border flex flex-col md:flex-row justify-between items-center gap-6">
+            <span className="text-xs text-scan-text-muted font-mono tracking-[0.3em] uppercase font-black opacity-60 text-center">© 2026 HORUSSIGHT CYBER DEFENSE.</span>
+            <div className="flex gap-6 md:gap-12 text-xs text-scan-text-muted font-black uppercase tracking-[0.3em]">
+              <span className="hover:text-scan-text cursor-pointer transition-colors">Privacy</span>
+              <span className="hover:text-scan-text cursor-pointer transition-colors">Terms</span>
             </div>
           </div>
         </div>
-      </footer>
+    </footer>
     </div>
-  );
+    );
 };
+
 
 
 const ReportView = ({ scanId, onBack, isGuest }: any) => {
@@ -730,115 +722,125 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
 
     // Header
     doc.setFillColor(10, 12, 16);
-    doc.rect(0, 0, 210, 40, 'F');
+    doc.rect(0, 0, 210, 45, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(22);
+    doc.setFontSize(26);
     doc.text('HORUSSIGHT SECURITY REPORT', 15, 25);
-    doc.setFontSize(10);
-    doc.text(`TARGET: ${scan.target}`, 15, 33);
-    doc.text(`DATE: ${new Date(scan.timestamp).toLocaleString()}`, 160, 33);
+    doc.setFontSize(14);
+    doc.text(`TARGET: ${scan.target}`, 15, 38);
+    doc.text(`DATE: ${new Date(scan.timestamp).toLocaleString()}`, 110, 38);
 
     // AI Overview
     doc.setTextColor(0, 0, 0);
+    doc.setFontSize(20);
+    doc.text('INTELLIGENCE OVERVIEW', 15, 60);
     doc.setFontSize(14);
-    doc.text('INTELLIGENCE OVERVIEW', 15, 55);
-    doc.setFontSize(10);
-    doc.text(`Overall Risk Score: ${analysis.overallRiskScore}/100`, 15, 65);
-    doc.text(`Severity: ${analysis.severityClassification}`, 150, 65);
+    doc.text(`Overall Risk Score: ${analysis.overallRiskScore}/100`, 15, 70);
+    doc.text(`Severity: ${analysis.severityClassification}`, 130, 70);
 
-    doc.setFontSize(11);
+    doc.setFontSize(16);
     doc.setFont('Helvetica', 'bold');
-    doc.text('Simplified Security Status (Non-Technical):', 15, 75);
+    doc.text('Simplified Security Status (Non-Technical):', 15, 85);
     doc.setFont('Helvetica', 'normal');
-    doc.setFontSize(10);
-    const splitSimple = doc.splitTextToSize(analysis.simplifiedRiskSummary, 180);
-    doc.text(splitSimple, 15, 80);
+    doc.setFontSize(14);
+    const splitSimple = doc.splitTextToSize(String(analysis.simplifiedRiskSummary || 'N/A'), 180);
+    doc.text(splitSimple, 15, 93);
 
-    let nextY = 80 + (splitSimple.length * 5) + 5;
+    let nextY = 93 + (splitSimple.length * 7) + 8;
 
-    doc.setFontSize(11);
+    doc.setFontSize(16);
     doc.setFont('Helvetica', 'bold');
     doc.text('Business Impact Analysis:', 15, nextY);
     doc.setFont('Helvetica', 'normal');
-    doc.setFontSize(10);
-    const splitImpact = doc.splitTextToSize(analysis.businessImpactSummary, 180);
-    doc.text(splitImpact, 15, nextY + 5);
+    doc.setFontSize(14);
+    const splitImpact = doc.splitTextToSize(String(analysis.businessImpactSummary || 'N/A'), 180);
+    doc.text(splitImpact, 15, nextY + 8);
 
-    nextY = nextY + 5 + (splitImpact.length * 5) + 15;
+    nextY = nextY + 8 + (splitImpact.length * 7) + 20;
 
     // Solutions Table
-    doc.setFontSize(14);
+    doc.setFontSize(18);
     doc.text('REMEDIATION ROADMAP', 15, nextY - 5);
 
-    const tableData = analysis.exhaustiveSolutions.map(sol => [
-      `P${sol.priorityLevel}`,
+    const safeSolutions = analysis.exhaustiveSolutions || [];
+    const tableData = safeSolutions.map((sol: any) => [
+      `P${sol.priorityLevel || '?' }`,
       sol.category || 'N/A',
-      sol.responsibleParty,
-      sol.description,
-      sol.action
+      sol.responsibleParty || 'N/A',
+      sol.description || 'N/A',
+      sol.action || 'N/A'
     ]);
 
     autoTable(doc, {
       startY: nextY,
-      head: [['ID', 'Category', 'Owner', 'Finding', 'Action Required']],
-      body: tableData,
+      head: [['Priority', 'Owner', 'Finding', 'Action Needed']],
+      body: tableData.map(r => [r[0], r[2], r[3], r[4]]), // Dropped 'Category' column to save width for size 14
       theme: 'grid',
-      headStyles: { fillColor: [79, 70, 229] },
-      styles: { fontSize: 8 },
+      headStyles: { fillColor: [79, 70, 229], fontSize: 14 },
+      styles: { fontSize: 13, cellPadding: 3 },
       columnStyles: {
-        0: { cellWidth: 10 },
+        0: { cellWidth: 20 },
         1: { cellWidth: 30 },
-        2: { cellWidth: 25 },
-        3: { cellWidth: 55 },
-        4: { cellWidth: 60 }
+        2: { cellWidth: 60 },
+        3: { cellWidth: 70 }
       }
     });
 
-    // Detailed Remediation Steps (since they are long, we add them after the table or on next page)
-    const finalY = (doc as any).lastAutoTable.finalY + 10;
-    doc.setFontSize(14);
+    // Detailed Remediation Steps
+    const finalY = (doc as any).lastAutoTable?.finalY ? (doc as any).lastAutoTable.finalY + 15 : nextY + 25;
+    doc.setFontSize(18);
     doc.text('DETAILED REMEDIATION CHECKLISTS', 15, finalY);
-    doc.setFontSize(10);
-    let currentY = finalY + 10;
+    doc.setFontSize(14);
+    let currentY = finalY + 12;
 
-    analysis.exhaustiveSolutions.forEach((sol, i) => {
-      if (currentY > 260) {
+    safeSolutions.forEach((sol: any, i: number) => {
+      if (currentY > 250) {
         doc.addPage();
-        currentY = 20;
+        currentY = 25;
       }
       doc.setFont('Helvetica', 'bold');
-      doc.text(`${i + 1}. ${sol.description} (${sol.category})`, 15, currentY);
+      doc.setFontSize(15);
+      doc.text(`${i + 1}. ${sol.description || 'Action'} (${sol.category || 'Misc'})`, 15, currentY);
+      doc.setFontSize(14);
       doc.setFont('Helvetica', 'normal');
-      currentY += 5;
-      doc.text(`Contact: ${sol.contactAdvice} via ${sol.contactChannels.join(', ')}`, 15, currentY);
-      currentY += 5;
-      sol.remediationChecklist.forEach((step) => {
-        doc.text(`[ ] ${step}`, 20, currentY);
-        currentY += 5;
+      currentY += 8;
+      
+      const responsibleText = `Team: ${sol.responsibleParty || 'IT'} | Contact: ${sol.contactAdvice || 'Team'} via ${(sol.contactChannels || []).join(', ')}`;
+      const splitResponsible = doc.splitTextToSize(responsibleText, 180);
+      doc.text(splitResponsible, 15, currentY);
+      currentY += (splitResponsible.length * 7) + 3;
+
+      (sol.remediationChecklist || []).forEach((step: string) => {
+        const splitStep = doc.splitTextToSize(`[ ] ${step}`, 175);
+        doc.text(splitStep, 20, currentY);
+        currentY += (splitStep.length * 7);
       });
 
       if (sol.contactTemplate) {
-        currentY += 2;
+        currentY += 5;
         doc.setFont('Helvetica', 'italic');
         doc.text('Communication Template:', 15, currentY);
         doc.setFont('Helvetica', 'normal');
-        currentY += 5;
+        currentY += 8;
         const splitTemplate = doc.splitTextToSize(sol.contactTemplate, 175);
 
-        // Check if we need a new page for the template
-        if (currentY + (splitTemplate.length * 5) > 280) {
+        if (currentY + (splitTemplate.length * 7) > 280) {
           doc.addPage();
-          currentY = 20;
+          currentY = 25;
         }
 
         doc.text(splitTemplate, 20, currentY);
-        currentY += (splitTemplate.length * 5);
+        currentY += (splitTemplate.length * 7);
       }
 
-      currentY += 10;
+      currentY += 15;
     });
 
-    doc.save(`horussight-report-${scan.id}.pdf`);
+    try {
+      doc.save(`horussight-report-${scan.id}.pdf`);
+    } catch (err) {
+      console.error("PDF Save Error", err);
+    }
   };
 
   useEffect(() => {
@@ -894,83 +896,67 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
   );
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="relative overflow-hidden p-10 lg:p-14 rounded-[3.5rem] bg-scan-surface/40 backdrop-blur-3xl border border-scan-border shadow-[0_30px_100px_rgba(0,0,0,0.5)] group mb-12">
-        {/* Abstract Background Accents */}
+    <div className="space-y-5 md:space-y-8 animate-in fade-in duration-500">
+      <div className="relative overflow-hidden p-4 sm:p-8 md:p-10 lg:p-14 rounded-2xl md:rounded-[3.5rem] bg-scan-surface/40 backdrop-blur-3xl border border-scan-border shadow-[0_20px_60px_rgba(0,0,0,0.4)] group mb-6 md:mb-12">
         <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-indigo-600/10 to-transparent -z-10 animate-pulse" />
         <div className="absolute -top-1/2 -right-1/4 w-2/3 h-[200%] bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.08)_0%,transparent_70%)] rotate-12 -z-10" />
-        <div className="absolute bottom-0 left-10 w-32 h-32 bg-indigo-500/5 rounded-full blur-[80px] -z-10" />
 
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12 relative z-10">
-          <div className="space-y-8">
-            <div className="flex items-center gap-4">
-              <motion.button
-                whileHover={{ x: -5, backgroundColor: 'rgba(79, 70, 229, 0.1)' }}
-                whileTap={{ scale: 0.95 }}
-                onClick={onBack}
-                className="p-3.5 rounded-2xl bg-scan-bg border border-scan-border text-scan-text-muted hover:text-indigo-400 transition-all shadow-inner"
-              >
-                <ChevronRight className="w-6 h-6 rotate-180" />
-              </motion.button>
-              <div className="h-10 w-[1px] bg-scan-border mx-2"></div>
-              <Badge variant={scan.status}>{scan.status}</Badge>
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-scan-text-muted animate-pulse">Scan System Active</span>
-            </div>
+        <div className="flex flex-col gap-6 md:gap-12 relative z-10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-3 md:space-y-8">
+              <div className="flex items-center gap-3">
+                <motion.button
+                  whileHover={{ x: -5, backgroundColor: 'rgba(79, 70, 229, 0.1)' }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={onBack}
+                  className="p-2 md:p-3.5 rounded-xl md:rounded-2xl bg-scan-bg border border-scan-border text-scan-text-muted hover:text-indigo-400 transition-all shadow-inner"
+                >
+                  <ChevronRight className="w-5 h-5 md:w-6 md:h-6 rotate-180" />
+                </motion.button>
+                <Badge variant={scan.status}>{scan.status}</Badge>
+                <span className="hidden sm:block text-[10px] font-black uppercase tracking-[0.3em] text-scan-text-muted animate-pulse">Scan Active</span>
+              </div>
 
-            <div className="space-y-3">
-              <h1 className="text-6xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-scan-text drop-shadow-2xl">
-                Scan <span className="text-indigo-500 inline-block transform -rotate-2">Report</span>
-              </h1>
-              <div className="flex items-center gap-3 font-mono text-lg text-scan-text-muted bg-scan-bg/40 py-2 px-4 rounded-xl border border-scan-border/50 backdrop-blur w-fit">
-                <Globe className="w-5 h-5 text-indigo-400" />
-                {scan.target}
+              <div className="space-y-2">
+                <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-scan-text">
+                  Scan <span className="text-indigo-500 inline-block transform -rotate-2">Report</span>
+                </h1>
+                <div className="flex items-center gap-2 font-mono text-xs md:text-base text-scan-text-muted bg-scan-bg/40 py-2 px-3 md:px-4 rounded-xl border border-scan-border/50 backdrop-blur w-fit max-w-full overflow-hidden">
+                  <Globe className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <span className="truncate">{scan.target}</span>
+                </div>
               </div>
             </div>
+
+            {/* Export buttons */}
+            {!isGuest && (
+              <div className="flex sm:flex-col gap-3">
+                <Button variant="secondary" onClick={handleDownloadJSON} icon={FileText} className="!py-2 !px-4 !text-xs md:!py-3 md:!px-6">
+                  JSON
+                </Button>
+                <Button variant="primary" onClick={handleDownloadPDF} icon={Download} className="!py-2 !px-4 !text-xs md:!py-3 md:!px-6" guided>
+                  PDF
+                </Button>
+              </div>
+            )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-8 lg:gap-14">
+          {/* Metrics row */}
+          <div className="grid grid-cols-3 gap-3 md:gap-8">
             {[
-              { label: 'Indice de Risque', value: `${analysis?.overallRiskScore || 0}/100`, icon: Shield, color: (analysis?.overallRiskScore || 0) > 60 ? 'text-rose-500' : 'text-emerald-500' },
+              { label: 'Risque', value: `${analysis?.overallRiskScore || 0}/100`, icon: Shield, color: (analysis?.overallRiskScore || 0) > 60 ? 'text-rose-500' : 'text-emerald-500' },
               { label: 'Endpoints', value: scan.endpoints?.length || 0, icon: Target, color: 'text-indigo-400' },
               { label: 'Vulnérabilités', value: scan.vulnerabilities?.length || 0, icon: AlertTriangle, color: 'text-amber-500' }
             ].map((m, i) => (
-              <div key={i} className="space-y-2 pr-8 lg:pr-14 border-r border-scan-border/30 last:border-0 border-dashed">
-                <div className="flex items-center gap-2 text-[10px] font-black text-scan-text-muted uppercase tracking-[0.2em]">
-                  <m.icon className={`w-3.5 h-3.5 ${m.color}`} />
-                  {m.label}
+              <div key={i} className="text-center space-y-1 md:space-y-2">
+                <div className="flex items-center justify-center gap-1 text-[9px] md:text-[10px] font-black text-scan-text-muted uppercase tracking-[0.2em]">
+                  <m.icon className={`w-3 h-3 md:w-3.5 md:h-3.5 ${m.color}`} />
+                  <span className="hidden sm:inline">{m.label}</span>
                 </div>
-                <p className="text-4xl font-bold tracking-tighter">{m.value}</p>
+                <p className={`text-2xl md:text-4xl font-bold tracking-tighter ${m.color}`}>{m.value}</p>
+                <p className="sm:hidden text-[9px] text-scan-text-muted uppercase tracking-widest font-black">{m.label}</p>
               </div>
             ))}
-
-            <div className="flex flex-col gap-4">
-              {isGuest ? (
-                <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">
-                  <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Guest Limitation</p>
-                  <p className="text-[9px] text-scan-text-muted">Upgrade to Export PDF/JSON</p>
-                </div>
-              ) : (
-                <>
-                  <Button
-                    variant="secondary"
-                    onClick={handleDownloadJSON}
-                    icon={FileText}
-                    className="py-3 px-8 text-xs uppercase tracking-widest rounded-xl hover:border-indigo-500/50"
-                  >
-                    Export JSON
-                  </Button>
-                  <Button
-                    variant="primary"
-                    onClick={handleDownloadPDF}
-                    icon={Download}
-                    className="py-3 px-8 text-xs uppercase tracking-widest rounded-xl shadow-indigo-600/20"
-                    guided
-                  >
-                    Export PDF
-                  </Button>
-                </>
-              )}
-            </div>
           </div>
         </div>
       </div>
@@ -1419,8 +1405,8 @@ const ReportView = ({ scanId, onBack, isGuest }: any) => {
             <Card title="Métriques du Scan" icon={Activity}>
               <div className="space-y-4">
                 {[
-                  { label: 'Durée Totale', value: `${(scan.duration / 1000).toFixed(2)}s` },
-                  { label: 'Endpoints Analysés', value: scan.endpoints.length },
+                  { label: 'Durée Totale', value: `${((scan.duration || 0) / 1000).toFixed(2)}s` },
+                  { label: 'Endpoints Analysés', value: scan.endpoints?.length || 0 },
                   { label: 'Niveau de Précision', value: 'Haute-Fidélité (DeepScan)' },
                   { label: 'Moteur Actif', value: 'Horus Engine v2.4' }
                 ].map((m, i) => (
@@ -1624,14 +1610,14 @@ const AuthPage = ({ onAuthSuccess, theme, toggleTheme }: any) => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-scan-bg text-scan-text transition-colors duration-300">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(79,70,229,0.15),transparent_60%)] -z-10"></div>
-      <Card className="w-full max-w-md p-10 bg-scan-surface border-scan-border backdrop-blur-xl shadow-2xl relative overflow-hidden">
+      <Card className="w-full max-w-md !p-6 md:!p-10 bg-scan-surface border-scan-border backdrop-blur-xl shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-600 to-transparent"></div>
-        <div className="text-center mb-10 space-y-3">
-          <div className="mx-auto w-14 h-14 bg-indigo-600 rounded-xl flex items-center justify-center text-scan-text shadow-xl shadow-indigo-900/40 mb-6">
-            <Shield className="w-7 h-7" />
+        <div className="text-center mb-6 md:mb-10 space-y-2">
+          <div className="mx-auto w-12 h-12 md:w-14 md:h-14 bg-indigo-600 rounded-xl flex items-center justify-center text-scan-text shadow-xl shadow-indigo-900/40 mb-4">
+            <Shield className="w-6 h-6 md:w-7 md:h-7" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-scan-text uppercase tracking-[0.2em]">HorusSight</h1>
-          <p className="text-scan-text-muted text-sm font-black tracking-[0.2em]">{isLogin ? 'SECURE NODE AUTHENTICATION' : 'INITIALIZE ANALYST PROFILE'}</p>
+          <h1 className="text-xl md:text-2xl font-bold tracking-tight text-scan-text uppercase tracking-[0.2em]">HorusSight</h1>
+          <p className="text-scan-text-muted text-xs md:text-sm font-black tracking-[0.2em]">{isLogin ? 'AUTHENTIFICATION SÉCURISÉE' : 'INITIALISER PROFIL ANALYSTE'}</p>
         </div>
 
         <div className="absolute top-6 right-6">
@@ -1652,11 +1638,11 @@ const AuthPage = ({ onAuthSuccess, theme, toggleTheme }: any) => {
             </label>
             <input
               type="text"
-              className="w-full bg-scan-bg border-2 border-scan-border rounded-[2rem] px-8 py-5 text-scan-text focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-mono text-base shadow-inner"
+              className="w-full bg-scan-bg border-2 border-scan-border rounded-2xl md:rounded-[2rem] px-5 py-3 md:px-8 md:py-5 text-scan-text focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-mono text-sm md:text-base shadow-inner"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              placeholder={isLogin ? "Ex: alpha_user" : "Choisissez un nom simple"}
+              placeholder={isLogin ? 'Ex: alpha_user' : 'Choisissez un nom simple'}
             />
           </div>
 
@@ -1665,7 +1651,7 @@ const AuthPage = ({ onAuthSuccess, theme, toggleTheme }: any) => {
               <label className="text-sm font-black text-scan-text-muted uppercase tracking-[0.2em] pl-6">Email (Facultatif / Optional)</label>
               <input
                 type="email"
-                className="w-full bg-scan-bg border-2 border-scan-border rounded-[2rem] px-8 py-5 text-scan-text focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-mono text-base shadow-inner"
+                className="w-full bg-scan-bg border-2 border-scan-border rounded-2xl md:rounded-[2rem] px-5 py-3 md:px-8 md:py-5 text-scan-text focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-mono text-sm md:text-base shadow-inner"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Ex: mail@test.com (optionnel)"
@@ -1923,7 +1909,7 @@ export default function App() {
           </header>
         )}
 
-        <div className="max-w-[1700px] mx-auto p-6 md:p-14 xl:px-24 xl:py-16 relative">
+        <div className="max-w-[1700px] mx-auto p-4 md:p-8 xl:px-16 xl:py-12 relative">
           {/* Floating Luxury Theme Toggle */}
           <div className="fixed bottom-8 right-8 z-50">
             <motion.button

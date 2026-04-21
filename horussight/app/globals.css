@@ -18,35 +18,37 @@
 }
 
 :root {
-  /* Dark Theme (Default) - Optimized for high visibility */
+  /* Dark Theme (Default) */
   --scan-bg: #05060A;
   --scan-surface: #0D0F16;
   --scan-header: #080A0F;
   --scan-border: #1E293B;
-  --scan-text: #F1F5F9; /* Shaded White */
+  --scan-text: #F1F5F9;
   --scan-text-muted: #94A3B8;
   --scan-accent: #6366F1;
   --scan-accent-muted: rgba(99, 102, 241, 0.1);
   --scan-danger: #FB7185;
   --scan-warning: #FBBF24;
   --scan-success: #34D399;
+  --scan-surface-rgb: 13, 15, 22;
 }
 
 :root.light {
-  /* Light Theme - Clean High Contrast */
+  /* Light Theme */
   --scan-bg: #FFFFFF;
   --scan-surface: #F8FAFC;
   --scan-header: #F1F5F9;
   --scan-border: #E2E8F0;
-  --scan-text: #020617; /* Slate 950 - Almost Black */
-  --scan-text-muted: #64748B; /* Slate 500 */
+  --scan-text: #020617;
+  --scan-text-muted: #64748B;
   --scan-accent: #4F46E5;
   --scan-accent-muted: rgba(79, 70, 229, 0.05);
+  --scan-surface-rgb: 248, 250, 252;
 }
 
 @layer base {
   html {
-    font-size: 17px; /* Increased base font size */
+    font-size: 17px;
   }
   body {
     background-color: var(--scan-bg);
@@ -55,7 +57,7 @@
   }
 }
 
-/* Custom Component Tokens - Larger Scale */
+/* ===== COMPONENT TOKENS ===== */
 .scan-card {
   background-color: var(--scan-surface);
   border: 1px solid var(--scan-border);
@@ -83,13 +85,12 @@
 
 .nav-link-inactive {
   color: var(--scan-text-muted);
-  @apply hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100;
 }
 
-/* Animations */
+/* ===== ANIMATIONS ===== */
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-10px); }
   100% { transform: translateY(0px); }
 }
 
@@ -97,9 +98,25 @@
   animation: float 4s ease-in-out infinite;
 }
 
-/* Glassmorphism Classes */
+/* ===== GLASSMORPHISM ===== */
 .glass {
   background: rgba(var(--scan-surface-rgb), 0.7);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.6);
 }
