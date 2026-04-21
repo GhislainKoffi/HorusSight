@@ -53,7 +53,7 @@ export const i18n = {
       welcome_title: "HorusSight",
       login_title: "SECURE AUTHENTICATION",
       signup_title: "INITIALIZE ANALYST PROFILE",
-      username: "Username or Email",
+      username: "Username or Email..",
       password: "Password",
       email: "Professional Email",
       choose_username: "Choose a simple username",
