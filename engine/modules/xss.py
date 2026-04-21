@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import List, Dict
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
 
-from xss_payloads import XSS_PAYLOADS
+from engine.modules.xss_payloads import get_xss_manager
 
 
 # =========================
@@ -27,6 +27,7 @@ class XSSScanner:
     def __init__(self, timeout: int = 10):
         self.timeout = timeout
         self.session = requests.Session()
+        self.payload_manager = get_xss_manager()
 
     # -------------------------
     # URL INJECTION
@@ -117,19 +118,21 @@ class XSSScanner:
     def scan(self, url: str, limit: int = None) -> List[XSSResult]:
         results = []
 
-        payloads = XSS_PAYLOADS[:limit] if limit else XSS_PAYLOADS
+        all_payloads = self.payload_manager.get_all()
+        payloads = all_payloads[:limit] if limit else all_payloads
 
-        print(f"[+] Starting XSS scan on: {url}")
-        print(f"[+] Payloads loaded: {len(payloads)}")
+        print(f"LOG:[+] Starting XSS scan on: {url}")
+        print(f"LOG:[+] Payloads loaded: {len(payloads)}")
 
         for p in payloads:
-            payload = p["payload"]
+            # p is an XSSPayload object
+            payload_str = p.payload
 
-            result = self.test_payload(url, payload)
+            result = self.test_payload(url, payload_str)
             results.append(result)
 
             if result.vulnerable:
-                print(f"[!] VULNERABLE: {payload}")
+                print(f"LOG:[!] VULNERABLE: {payload_str}")
 
         return results
 

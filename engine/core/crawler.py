@@ -25,12 +25,16 @@ class Crawler:
             if url in self.visited or depth > self.max_depth:
                 continue
 
-            print(f"[Crawling] {url}")
+            print(f"LOG:Infiltration tactique sur {url}...")
 
             try:
                 response = self.client.get(url)
 
-                if not response or not response.is_html:
+                if not response:
+                    continue
+                
+                content_type = response.headers.get("Content-Type", "").lower()
+                if "text/html" not in content_type:
                     continue
 
                 self.visited.add(url)
@@ -46,10 +50,11 @@ class Crawler:
 
                 for link in page_data["links"]:
                     if link not in self.visited:
+                        print(f"LOG:[Crawling] {url}")
                         self.to_visit.append((link, depth + 1))
 
             except Exception as e:
-                print(f"[Error] {url} -> {e}")
+                print(f"LOG:[Error] {url} -> {e}")
 
         return results
 

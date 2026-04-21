@@ -1,12 +1,12 @@
 """
 HorusSight - Engine Entry Point
 ================================
-Standalone execution entry for testing the security scanning engine.
-
-This file is NOT the frontend.
-It is used to manually trigger scans or test the engine independently.
+Standalone execution entry for the security scanning engine.
 """
 
+import sys
+import json
+import argparse
 from engine.core.orchestrator import Orchestrator
 
 
@@ -18,44 +18,75 @@ def print_banner():
 
 
 def main():
-    print_banner()
+    parser = argparse.ArgumentParser(description="HorusSight Security Engine")
+    parser.add_argument("--url", help="Target URL to scan")
+    parser.add_argument("--json", action="store_true", help="Output results in JSON format")
+    parser.add_argument("--user-id", default="system", help="ID of the user initiating the scan")
+    
+    args = parser.parse_args()
 
-    # Initialize orchestrator (core engine controller)
+    # Manual input if no URL provided
+    if not args.url:
+        if not args.json:
+            print_banner()
+            target = input("Enter target URL to scan: ").strip()
+        else:
+            # If JSON mode and no URL, we can't do much
+            print(json.dumps({"error": "No target URL provided"}))
+            return
+    else:
+        target = args.url
+
+    if not target:
+        if args.json:
+            print(json.dumps({"error": "No target URL provided"}))
+        else:
+            print("[!] No target provided. Exiting...")
+        return
+
+    if not args.json:
+        print_banner()
+        print(f"\n[+] Starting scan on: {target}\n")
+
+    # Initialize orchestrator
     orchestrator = Orchestrator()
 
     try:
-        # Input target (for CLI testing)
-        target = input("Enter target URL to scan: ").strip()
-
-        if not target:
-            print("[!] No target provided. Exiting...")
-            return
-
-        print(f"\n[+] Starting scan on: {target}\n")
-
-        # Run full scan through engine
+        # Run full scan
         results = orchestrator.run(target)
 
-        # Display results
-        print("\n" + "=" * 60)
-        print("SCAN RESULTS")
-        print("=" * 60)
-
-        if not results:
-            print("[-] No vulnerabilities detected.")
+        # Output results
+        if args.json:
+            print(json.dumps(results, indent=2))
         else:
-            for i, result in enumerate(results, 1):
-                print(f"\n[{i}] {result}")
+            print("\n" + "=" * 60)
+            print("SCAN RESULTS")
+            print("=" * 60)
+            
+            findings = results.get("findings", [])
+            if not findings:
+                print("[-] No vulnerabilities detected.")
+            else:
+                for i, result in enumerate(findings, 1):
+                    print(f"\n[{i}] {result['type']} at {result['url']}")
+                    print(f"    Severity: {result['severity']}")
+                    print(f"    Evidence: {result['evidence']}")
 
-        print("\n" + "=" * 60)
-        print("Scan completed successfully.")
-        print("=" * 60)
+            print("\n" + "=" * 60)
+            print(f"Scan completed. Pages scanned: {results.get('pages_scanned')}")
+            print("=" * 60)
 
     except KeyboardInterrupt:
-        print("\n[!] Scan interrupted by user.")
+        if not args.json:
+            print("\n[!] Scan interrupted by user.")
+        else:
+            print(json.dumps({"error": "Scan interrupted"}))
 
     except Exception as e:
-        print(f"\n[!] Error during scan: {str(e)}")
+        if not args.json:
+            print(f"\n[!] Error during scan: {str(e)}")
+        else:
+            print(json.dumps({"error": str(e)}))
 
 
 if __name__ == "__main__":
